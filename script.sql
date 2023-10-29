@@ -105,7 +105,7 @@ CREATE TABLE LOS_GDDS.Pago_venta(
 );
 
 CREATE TABLE LOS_GDDS.Comprador(
-    id INT PRIMARY KEY,
+    id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(100),
     dni NUMERIC(18,0),
@@ -292,8 +292,8 @@ FOREIGN KEY (propietario_id) REFERENCES LOS_GDDS.Propietario(id)
 GO
 
 ALTER TABLE LOS_GDDS.Inmueble
-ADD CONSTRAINT FK_inmueble_provincia
-FOREIGN KEY (provincia_id) REFERENCES LOS_GDDS.Provincia(id)
+ADD CONSTRAINT FK_inmueble_barrio
+FOREIGN KEY (barrio_id) REFERENCES LOS_GDDS.Barrio(id)
 GO
 
 ALTER TABLE LOS_GDDS.Inmueble
@@ -306,10 +306,6 @@ ADD CONSTRAINT FK_inmueble_estado
 FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_inmueble(id)
 GO
 
-ALTER TABLE LOS_GDDS.Inmueble
-ADD CONSTRAINT FK_inmueble_tipo
-FOREIGN KEY (tipo_inmueble_id) REFERENCES LOS_GDDS.Tipo_inmueble(id)
-GO
 
 ALTER TABLE LOS_GDDS.Inmueble
 ADD CONSTRAINT FK_inmueble_orientacion
@@ -349,14 +345,10 @@ FOREIGN KEY (medio_pago_id) REFERENCES LOS_GDDS.Medio_pago(id)
 GO
 
 -- Ubicacion
-ALTER TABLE LOS_GDDS.Provincia 
-ADD CONSTRAINT FK_provincia_localidad
-FOREIGN KEY (localidad_id) REFERENCES LOS_GDDS.Localidad(id)
-GO
 
 ALTER TABLE LOS_GDDS.Localidad 
-ADD CONSTRAINT FK_localidad_barrio
-FOREIGN KEY (barrio_id) REFERENCES LOS_GDDS.Barrio(id)
+ADD CONSTRAINT FK_localidad_provincia
+FOREIGN KEY (provincia_id) REFERENCES LOS_GDDS.Provincia(id)
 GO
 
 -- Alquiler
@@ -424,6 +416,7 @@ ALTER TABLE LOS_GDDS.Inmueble_Ambiente
 ADD CONSTRAINT FK_inmuebleAmbiente_ambiente
 FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
 GO
+
 
 /* ------------------------------------------ MIGRACIÓN CON PROCEDURES ------------------------------------------ */
 
