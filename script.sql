@@ -542,7 +542,7 @@ BEGIN
 END
 GO
 
-/*
+
 CREATE PROCEDURE LOS_GDDS.MIGRAR_Caracteristica
 AS 
 BEGIN
@@ -551,29 +551,54 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE LOS_GDDS.MIGRAR_CaracteristicaInmueble
-AS 
-BEGIN
-	INSERT INTO LOS_GDDS.Caracteristica_inmueble(caracteristica_id, inmueble_id)
-	SELECT DISTINCT m.INMUEBLE_CARACTERISTICA_CABLE
-    FROM gd_esquema.Maestra m
-END
-GO
-
-
 CREATE PROCEDURE LOS_GDDS.MIGRAR_INMUEBLE AS
 BEGIN
-    INSERT INTO LOS_GDDS.Inmueble (tipo_inmueble_id, descripcion, propietario_id, direccion, provincia_id, superficie_total, disposicion_id, estado_id, orientacion_id, antiguedad, caracteristica_id, ultima_expensa, cantidad_ambientes)
+    INSERT INTO LOS_GDDS.Inmueble (id, tipo_inmueble_id, descripcion, propietario_id, direccion, barrio_id, superficie_total, disposicion_id, estado_id, orientacion_id, antiguedad, ultima_expensa, cantidad_ambientes)
     SELECT 
-        NULL, INMUEBLE_DESCRIPCION, p.id, INMUEBLE_DIRECCION, NULL, INMUEBLE_SUPERFICIETOTAL, d.id, e.id, o.id, INMUEBLE_ANTIGUEDAD, NULL, INMUEBLE_EXPESAS, INMUEBLE_CANT_AMBIENTES
+        INMUEBLE_CODIGO, INMUEBLE_TIPO_INMUEBLE, INMUEBLE_DESCRIPCION, p.id, INMUEBLE_DIRECCION, b.id, INMUEBLE_SUPERFICIETOTAL, d.id, e.id, o.id, INMUEBLE_ANTIGUEDAD, INMUEBLE_EXPESAS, INMUEBLE_CANT_AMBIENTES
     FROM gd_esquema.Maestra m
     LEFT JOIN LOS_GDDS.Propietario p ON m.PROPIETARIO_DNI = p.dni -- en la tabla maestra no hay un INMUEBLE_PROPIETARIO, no se como hacer esto
     LEFT JOIN LOS_GDDS.Disposicion d ON m.INMUEBLE_DISPOSICION = d.nombre
     LEFT JOIN LOS_GDDS.Estado_inmueble e ON m.INMUEBLE_ESTADO = e.nombre
     LEFT JOIN LOS_GDDS.Orientacion o ON m.INMUEBLE_ORIENTACION = o.nombre
+    LEFT JOIN LOS_GDDS.Barrio b ON m.INMUEBLE_BARRIO = b.nombre
     WHERE INMUEBLE_CODIGO IS NOT NULL;
 END;
-*/
+
+CREATE PROCEDURE LOS_GDDS.MIGRAR_CaracteristicaInmueble
+AS 
+BEGIN
+	INSERT INTO LOS_GDDS.Caracteristica_inmueble(caracteristica_id, inmueble_id, valor)
+	SELECT DISTINCT c.id, i.id, m.INMUEBLE_CARACTERISTICA_WIFI
+    FROM gd_esquema.Maestra m
+    JOIN LOS_GDDS.Inmueble i ON m.INMUEBLE_CODIGO = i.id
+    JOIN LOS_GDDS.Caracteristica c ON c.nombre = 'wifi'
+    WHERE INMUEBLE_CODIGO IS NOT NULL;
+
+    INSERT INTO LOS_GDDS.Caracteristica_inmueble(caracteristica_id, inmueble_id, valor)
+	SELECT DISTINCT c.id, i.id, m.INMUEBLE_CARACTERISTICA_CABLE
+    FROM gd_esquema.Maestra m
+    JOIN LOS_GDDS.Inmueble i ON m.INMUEBLE_CODIGO = i.id
+    JOIN LOS_GDDS.Caracteristica c ON c.nombre = 'cable'
+    WHERE INMUEBLE_CODIGO IS NOT NULL;
+
+    INSERT INTO LOS_GDDS.Caracteristica_inmueble(caracteristica_id, inmueble_id, valor)
+	SELECT DISTINCT c.id, i.id, m.INMUEBLE_CARACTERISTICA_CALEFACCION
+    FROM gd_esquema.Maestra m
+    JOIN LOS_GDDS.Inmueble i ON m.INMUEBLE_CODIGO = i.id
+    JOIN LOS_GDDS.Caracteristica c ON c.nombre = 'calefaccion'
+    WHERE INMUEBLE_CODIGO IS NOT NULL;
+
+    INSERT INTO LOS_GDDS.Caracteristica_inmueble(caracteristica_id, inmueble_id, valor)
+	SELECT DISTINCT c.id, i.id, m.INMUEBLE_CARACTERISTICA_GAS
+    FROM gd_esquema.Maestra m
+    JOIN LOS_GDDS.Inmueble i ON m.INMUEBLE_CODIGO = i.id
+    JOIN LOS_GDDS.Caracteristica c ON c.nombre = 'gas'
+    WHERE INMUEBLE_CODIGO IS NOT NULL;
+    
+END
+GO
+
 
 ------------- ANUNCIO ----------------
 CREATE PROCEDURE LOS_GDDS.MIGRAR_EstadoAnuncio
