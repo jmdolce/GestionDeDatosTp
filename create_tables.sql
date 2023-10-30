@@ -78,7 +78,7 @@ CREATE TABLE LOS_GDDS.Tipo_inmueble(
 
 CREATE TABLE LOS_GDDS.Venta(
     id NUMERIC(18,0) PRIMARY KEY, ---esto es el codigo
-    anuncio_id INT NULL, --FK
+    anuncio_id NUMERIC(18,0) NULL, --FK
     comprador_id INT, --FK
     fecha_venta DATETIME,
     precio NUMERIC(18,2),
@@ -109,10 +109,10 @@ CREATE TABLE LOS_GDDS.Comprador(
 /* ------------------------------------------ ANUNCIO ------------------------------------------ */
 
 CREATE TABLE LOS_GDDS.Anuncio(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id NUMERIC(18,0) PRIMARY KEY,
     fecha_publicacion DATETIME,
-    agente_id NUMERIC(19,0) NULL, -- FK
-    inmueble_id NUMERIC(18,0) NULL, -- FK
+    agente_id NUMERIC(19,0), -- FK
+    inmueble_id NUMERIC(18,0), -- FK
     operacion_id INT, -- FK
     precio_inmueble NUMERIC(18,2),
     moneda_id INT, --FK
@@ -125,7 +125,7 @@ CREATE TABLE LOS_GDDS.Anuncio(
 CREATE TABLE LOS_GDDS.Agente(
     id NUMERIC(19,0) IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
-    sucursal_id NUMERIC(18,0) NULL, --FK
+    sucursal_id NUMERIC(18,0) , --FK
     apellido NVARCHAR(100),
     dni NUMERIC(18,0),
     fecha_registro DATETIME,
@@ -185,11 +185,11 @@ CREATE TABLE LOS_GDDS.Barrio(
 
 CREATE TABLE LOS_GDDS.Alquiler(
     id NUMERIC(18,0) PRIMARY KEY,
-    anuncio_id INT NULL, -- FK
-    inquilino_id INT NULL, -- FK
+    anuncio_id NUMERIC(18,0), -- FK
+    inquilino_id INT, -- FK
     fecha_inicio DATETIME,
     fecha_fin DATETIME,
-    importe NUMERIC(18,2) NULL,   -- no esta en la global
+    importe NUMERIC(18,2),  
     cantidad_periodos NUMERIC(18,0),
     comision NUMERIC(18,2),
     gastos_averiguaciones NUMERIC(18,2),

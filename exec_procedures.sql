@@ -16,10 +16,11 @@ EXEC LOS_GDDS.MIGRAR_Orientacion --OK
 
 
 EXEC LOS_GDDS.MIGRAR_Ambiente-- OK
-EXEC LOS_GDDS.MIGRAR_INMUEBLE -- OK
+EXEC LOS_GDDS.MIGRAR_Inmueble -- OK
 EXEC LOS_GDDS.MIGRAR_Caracteristica-- OK
 EXEC LOS_GDDS.MIGRAR_AmbienteInmueble --OK 
-EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble
+EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble --OK
+
 
 EXEC LOS_GDDS.MIGRAR_PROPIETARIO ---OK
 EXEC LOS_GDDS.MIGRAR_EstadoAnuncio---OK
@@ -32,64 +33,62 @@ EXEC LOS_GDDS.MIGRAR_MedioPago---OK
 
 
 EXEC LOS_GDDS.MIGRAR_PagoVenta---OK
-EXEC LOS_GDD.MIGRAR_Comprador  ---OK
+EXEC LOS_GDDS.MIGRAR_Comprador  ---OK
 
 EXEC LOS_GDDS.MIGRAR_Inquilino---OK
 EXEC LOS_GDDS.MIGRAR_EstadoAlquiler---OK
 
+EXEC LOS_GDDS.MIGRAR_Anuncio
+EXEC LOS_GDDS.MIGRAR_Alquiler
+
+EXEC LOS_GDDS.MIGRAR_DetalleAlquiler
+EXEC LOS_GDDS.MIGRAR_PagoAlquiler
 
 
---- ACA ALQUILER
-
--- Despues de alquiler chequear:
-
---EXEC LOS_GDDS.MIGRAR_DetalleAlquiler
---EXEC LOS_GDDS.MIGRAR_PagoAlquiler
+EXEC LOS_GDDS.MIGRAR_Venta
 
 
+-- SELECT * from LOS_GDDS.Provincia
+-- SELECT * from LOS_GDDS.Localidad
+-- SELECT * from LOS_GDDS.Barrio
+-- SELECT * from LOS_GDDS.Sucursal
 
---- ACA ANUNCIO
---- ACA VENTA
+-- SELECT * from LOS_GDDS.Agente
 
+-- SELECT * from LOS_GDDS.Alquiler
+-- SELECT * from LOS_GDDS.Detalle_alquiler
+-- SELECT * from LOS_GDDS.Pago_alquiler
 
-
-
-
-SELECT * from LOS_GDDS.Provincia
-SELECT * from LOS_GDDS.Localidad
-SELECT * from LOS_GDDS.Barrio
-SELECT * from LOS_GDDS.Sucursal
-
-SELECT * from LOS_GDDS.Agente
-
+-- SELECT * from LOS_GDDS.Anuncio
+-- SELECT * from LOS_GDDS.Venta
 
 
-SELECT * from LOS_GDDS.Propietario
-SELECT * from LOS_GDDS.Comprador
-SELECT * from LOS_GDDS.Disposicion
+-- SELECT * from LOS_GDDS.Propietario
+-- SELECT * from LOS_GDDS.Comprador
+-- SELECT * from LOS_GDDS.Disposicion
 
-SELECT * from LOS_GDDS.Tipo_inmueble
+-- SELECT * from LOS_GDDS.Tipo_inmueble
 
-SELECT * from LOS_GDDS.Estado_inmueble
-SELECT * from LOS_GDDS.Orientacion
+-- SELECT * from LOS_GDDS.Estado_inmueble
+-- SELECT * from LOS_GDDS.Orientacion
 
-SELECT * from LOS_GDDS.Estado_anuncio
-
-
-SELECT * from LOS_GDDS.Operacion
-SELECT * from LOS_GDDS.Tipo_periodo
-SELECT * from LOS_GDDS.Moneda
-SELECT * from LOS_GDDS.Medio_pago
+-- SELECT * from LOS_GDDS.Estado_anuncio
 
 
-SELECT * from LOS_GDDS.Pago_venta
-SELECT * from LOS_GDDS.Detalle_alquiler
+-- SELECT * from LOS_GDDS.Operacion
+-- SELECT * from LOS_GDDS.Tipo_periodo
+-- SELECT * from LOS_GDDS.Moneda
+-- SELECT * from LOS_GDDS.Medio_pago
 
-SELECT * from LOS_GDDS.Inquilino
-SELECT * from LOS_GDDS.Estado_alquiler
+
+-- SELECT * from LOS_GDDS.Pago_venta
+-- SELECT * from LOS_GDDS.Detalle_alquiler
+
+-- SELECT * from LOS_GDDS.Inquilino
+-- SELECT * from LOS_GDDS.Estado_alquiler
 
 
 
 
-SELECT * from gd_esquema.Maestra
+-- SELECT * from gd_esquema.Maestra
 
