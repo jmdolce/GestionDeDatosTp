@@ -289,14 +289,13 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_Anuncio
 AS 
 BEGIN
 	INSERT INTO LOS_GDDS.Anuncio(id, fecha_publicacion, agente_id, inmueble_id, operacion_id, precio_inmueble, moneda_id, periodo_id, estado_id, fecha_finalizacion, costo_publicacion)
-	SELECT DISTINCT m.ANUNCIO_CODIGO ,m.ANUNCIO_FECHA_PUBLICACION, ag.id, in.id, o.id, m.ANUNCIO_PRECIO_PUBLICADO, mon.id, tp.id, ea.id, m.ANUNCIO_FECHA_FINALIZACION, m.ANUNCIO_COSTO_ANUNCIO
+	SELECT DISTINCT m.ANUNCIO_CODIGO ,m.ANUNCIO_FECHA_PUBLICACION, ag.id, m.INMUEBLE_CODIGO, o.id, m.ANUNCIO_PRECIO_PUBLICADO, mon.id, tp.id, ea.id, m.ANUNCIO_FECHA_FINALIZACION, m.ANUNCIO_COSTO_ANUNCIO
     FROM gd_esquema.Maestra m
     JOIN LOS_GDDS.Operacion o ON m.ANUNCIO_TIPO_OPERACION = o.nombre
     JOIN LOS_GDDS.Agente ag ON m.AGENTE_DNI = ag.dni
     JOIN LOS_GDDS.Moneda mon ON m.ANUNCIO_MONEDA = mon.nombre
     JOIN LOS_GDDS.Tipo_periodo tp ON m.ANUNCIO_TIPO_PERIODO = tp.nombre
     JOIN LOS_GDDS.Estado_anuncio ea ON m.ANUNCIO_ESTADO = ea.nombre
-    JOIN LOS_GDDS.Inmueble in ON m.INMUEBLE_CODIGO = in.id
     
     WHERE m.INMUEBLE_CODIGO IS NOT NULL
 END
@@ -408,8 +407,8 @@ GO
     SELECT DISTINCT m.PAGO_ALQUILER_CODIGO, m.ALQUILER_CODIGO, m.PAGO_ALQUILER_FECHA ,m.PAGO_ALQUILER_NRO_PERIODO, m.PAGO_ALQUILER_DESC, m.PAGO_ALQUILER_FEC_INI,
                     m.PAGO_ALQUILER_FEC_FIN, m.PAGO_ALQUILER_IMPORTE, mp.id
     FROM gd_esquema.Maestra m
-    JOIN LOS_GDDS.Medio_pago mp ON mp.nombre = m.PAGO_VENTA_MEDIO_PAGO
-    WHERE m.PAGO_ALQUILER_CODIGO IS NOT NULL
+    JOIN LOS_GDDS.Medio_pago mp ON mp.nombre = m.PAGO_ALQUILER_MEDIO_PAGO
+	WHERE m.PAGO_ALQUILER_CODIGO IS NOT NULL
  END
  GO
 
@@ -436,18 +435,45 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_Alquiler
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.Alquiler(id, fecha_inicio, estado_id, fecha_fin, cantidad_periodos, comision, gastos_averiguaciones, deposito, anuncio_id, importe, inquilino_id)
-    SELECT TOP 1 m.ALQUILER_CODIGO, m.ALQUILER_FECHA_INICIO, e.id, m.ALQUILER_FECHA_FIN, m.ALQUILER_CANT_PERIODOS, m.ALQUILER_COMISION, m.ALQUILER_GASTOS_AVERIGUA, m.ALQUILER_DEPOSITO, an.id, m.PAGO_ALQUILER_IMPORTE, inq.id
-    FROM gd_esquema.Maestra m
+    ;WITH CTE AS (
+        SELECT
+            m.ALQUILER_CODIGO,
+            m.ALQUILER_FECHA_INICIO,
+            e.id AS estado_id,
+            m.ALQUILER_FECHA_FIN,
+            m.ALQUILER_CANT_PERIODOS,
+            m.ALQUILER_COMISION,
+            m.ALQUILER_GASTOS_AVERIGUA,
+            m.ALQUILER_DEPOSITO,
+            m.ANUNCIO_CODIGO,
+            m.PAGO_ALQUILER_IMPORTE,
+            inq.id AS inquilino_id,
+            m.PAGO_ALQUILER_FEC_INI,
+            ROW_NUMBER() OVER (PARTITION BY m.ANUNCIO_CODIGO ORDER BY m.PAGO_ALQUILER_FEC_INI ASC) AS rn
+        FROM gd_esquema.Maestra m
+        JOIN LOS_GDDS.Estado_alquiler e ON m.ALQUILER_ESTADO = e.nombre
+        JOIN LOS_GDDS.Inquilino inq ON m.INQUILINO_DNI = inq.dni
+        WHERE m.ALQUILER_CODIGO IS NOT NULL
+    )
     
-    JOIN LOS_GDDS.Estado_alquiler e ON m.ALQUILER_ESTADO = e.nombre
-	JOIN LOS_GDDS.Anuncio an ON m.ALQUILER_CODIGO = an.id
-    JOIN LOS_GDDS.Inquilino inq ON m.INQUILINO_DNI = inq.dni
-	WHERE m.ALQUILER_CODIGO IS NOT NULL
-	GROUP BY m.ALQUILER_CODIGO, m.ALQUILER_FECHA_INICIO, e.id, m.ALQUILER_FECHA_FIN, m.ALQUILER_CANT_PERIODOS, m.ALQUILER_COMISION, m.ALQUILER_GASTOS_AVERIGUA, m.ALQUILER_DEPOSITO, m.ANUNCIO_CODIGO, m.PAGO_ALQUILER_IMPORTE, m.PAGO_ALQUILER_FEC_INI
-	ORDER BY m.PAGO_ALQUILER_FEC_INI ASC
+    INSERT INTO LOS_GDDS.Alquiler(id, fecha_inicio, estado_id, fecha_fin, cantidad_periodos, comision, gastos_averiguaciones, deposito, anuncio_id, importe, inquilino_id)
+    SELECT
+        ALQUILER_CODIGO,
+        ALQUILER_FECHA_INICIO,
+        estado_id,
+        ALQUILER_FECHA_FIN,
+        ALQUILER_CANT_PERIODOS,
+        ALQUILER_COMISION,
+        ALQUILER_GASTOS_AVERIGUA,
+        ALQUILER_DEPOSITO,
+        ANUNCIO_CODIGO,
+        PAGO_ALQUILER_IMPORTE,
+        inquilino_id
+    FROM CTE
+    WHERE rn = 1;
 END
 GO
+
 
  CREATE PROCEDURE LOS_GDDS.MIGRAR_DetalleAlquiler
  AS 
