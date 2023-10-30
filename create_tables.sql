@@ -36,7 +36,7 @@ CREATE TABLE LOS_GDDS.Inmueble(
     id NUMERIC(18,0) PRIMARY KEY,
     tipo_inmueble_id INT, --FK
     descripcion NVARCHAR(100),
-    propietario_id INT NULL, -- FK
+    propietario_id INT, -- FK
     direccion NVARCHAR(100),
     barrio_id INT, --FK
     superficie_total NUMERIC(18,2), 
@@ -45,7 +45,6 @@ CREATE TABLE LOS_GDDS.Inmueble(
     orientacion_id INT, --FK
     antiguedad NUMERIC(18,0),
     ultima_expensa NUMERIC(18,2),
-    cantidad_ambientes NVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.Caracteristica_inmueble(
@@ -93,7 +92,7 @@ CREATE TABLE LOS_GDDS.Pago_venta(
     moneda_id INT,      -- FK
     cotizacion NUMERIC(18,2),
     medio_pago_id INT, -- FK
-    venta_id INT
+    venta_id NUMERIC(18,0) -- FK
 );
 
 CREATE TABLE LOS_GDDS.Comprador(
@@ -136,7 +135,7 @@ CREATE TABLE LOS_GDDS.Agente(
 );
 
 CREATE TABLE LOS_GDDS.Sucursal(
-    id NUMERIC(18, 0),
+    id NUMERIC(18, 0) PRIMARY KEY,
     nombre NVARCHAR(100),
     direccion NVARCHAR(100),
     telefono NVARCHAR(100),

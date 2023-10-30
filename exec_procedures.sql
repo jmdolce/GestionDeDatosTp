@@ -15,12 +15,13 @@ EXEC LOS_GDDS.MIGRAR_TipoInmueble --OK
 EXEC LOS_GDDS.MIGRAR_Orientacion --OK
 
 
---- ACA LA DE CARACTERISTICA
---- ACA LA DE AMBIENTE
-
+EXEC LOS_GDDS.MIGRAR_Ambiente-- OK
+EXEC LOS_GDDS.MIGRAR_INMUEBLE -- OK
+EXEC LOS_GDDS.MIGRAR_Caracteristica-- OK
+EXEC LOS_GDDS.MIGRAR_AmbienteInmueble --OK 
+EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble
 
 EXEC LOS_GDDS.MIGRAR_PROPIETARIO ---OK
-EXEC LOS_GDDS.MIGRAR_Inmueble---
 EXEC LOS_GDDS.MIGRAR_EstadoAnuncio---OK
 
 
@@ -37,18 +38,19 @@ EXEC LOS_GDDS.MIGRAR_Inquilino---OK
 EXEC LOS_GDDS.MIGRAR_EstadoAlquiler---OK
 
 
--- Primero hacer alquiler 
+
+--- ACA ALQUILER
+
+-- Despues de alquiler chequear:
 
 --EXEC LOS_GDDS.MIGRAR_DetalleAlquiler
 --EXEC LOS_GDDS.MIGRAR_PagoAlquiler
 
 
+
 --- ACA ANUNCIO
---- ACA ALQUILER
 --- ACA VENTA
 
-
---- ACA INMUEBLE
 
 
 

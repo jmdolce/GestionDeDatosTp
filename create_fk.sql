@@ -75,9 +75,9 @@ ADD CONSTRAINT FK_venta_moneda
 FOREIGN KEY (moneda_id) REFERENCES LOS_GDDS.Moneda(id)
 GO
 
-ALTER TABLE LOS_GDDS.Venta 
-ADD CONSTRAINT FK_venta_pago
-FOREIGN KEY (pago_venta_id) REFERENCES LOS_GDDS.Pago_venta(id)
+ALTER TABLE LOS_GDDS.Pago_venta
+ADD CONSTRAINT FK_PagoVenta_venta
+FOREIGN KEY (venta_id) REFERENCES LOS_GDDS.Venta(id)
 GO
 
 -- Pago_venta
