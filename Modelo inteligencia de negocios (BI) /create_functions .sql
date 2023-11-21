@@ -79,3 +79,8 @@ BEGIN
     
     IF @SUPERFICIE_TOTAL > 100
         SET @RANGO_M2 = 5
+
+    RETURN @RANGO_M2
+	
+END
+GO
