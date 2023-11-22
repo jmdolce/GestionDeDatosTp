@@ -119,7 +119,8 @@ CREATE TABLE BI_LOS_GDDS.BI_Anuncio(
     periodo_id INT, -- FK
     estado_id INT, -- FK
     fecha_finalizacion DATE,
-    costo_publicacion NUMERIC(18,2)
+    costo_publicacion NUMERIC(18,2),
+    rango_etario_agente_id INT --FK
 );
 
 CREATE TABLE BI_LOS_GDDS.BI_Agente(
@@ -194,7 +195,8 @@ CREATE TABLE BI_LOS_GDDS.BI_Alquiler(
     comision NUMERIC(18,2),
     gastos_averiguaciones NUMERIC(18,2),
     estado_id INT, --FK
-    deposito NUMERIC(18,2)
+    deposito NUMERIC(18,2),
+    rango_etario_inquilino id INT --FK
 );
 
 CREATE TABLE BI_LOS_GDDS.BI_Pago_alquiler(
@@ -244,4 +246,11 @@ CREATE TABLE BI_LOS_GDDS.BI_Medio_pago(
 CREATE TABLE BI_LOS_GDDS.BI_RANGO_ETARIO(
 	RANGO_ETARIO_ID INT IDENTITY(1,1) PRIMARY KEY,
 	RANGO_ETARIO_DESCRIPCION nvarchar(255)
+);
+
+
+--- En anuncio la fk ? como con el rango etario del agente ?
+CREATE TABLE BI_LOS_GDDS.BI_RANGO_M2(
+    RANGO_M2_ID INT IDENTITY(1,1) PRIMARY KEY,
+	RANGO_M2_DESCRIPCION nvarchar(255)
 );

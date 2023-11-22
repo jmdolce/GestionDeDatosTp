@@ -84,3 +84,26 @@ BEGIN
 	
 END
 GO
+
+
+CREATE FUNCTION BI_LOS_GDDS.FX_CALCULAR_CUATRIMESTRE(@fecha DATETIME)
+	RETURNS INT
+BEGIN
+	DECLARE @cuatrimestre INT
+	DECLARE @mes INT
+
+	SET @mes = MONTH(fecha)
+
+
+	WHEN (@mes IN (1,2,3))
+    THEN SET @cuatrimestre = 1
+    WHEN (@mes IN (4,5,6))
+    THEN SET @cuatrimestre = 2
+    WHEN (@mes IN (7,8,9))
+    THEN SET @cuatrimestre = 3
+    ELSE SET @cuatrimestre = 4
+
+	RETURN @cuatrimestre
+
+END
+GO

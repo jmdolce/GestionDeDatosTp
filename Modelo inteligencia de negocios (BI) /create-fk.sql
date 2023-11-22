@@ -23,6 +23,11 @@ FOREIGN KEY (periodo_id) REFERENCES BI_LOS_GDDS.BI_Tipo_periodo(id)
 GO
 
 ALTER TABLE BI_LOS_GDDS.BI_Anuncio 
+ADD CONSTRAINT FK_anuncio_rangoEtario
+FOREIGN KEY (rango_etario_agente_id) REFERENCES BI_LOS_GDDS.BI_rango_etario(rango_etario_id)
+GO
+
+ALTER TABLE BI_LOS_GDDS.BI_Anuncio 
 ADD CONSTRAINT FK_anuncio_estado
 FOREIGN KEY (estado_id) REFERENCES BI_LOS_GDDS.BI_Estado_anuncio(id)
 GO
@@ -112,6 +117,11 @@ GO
 ALTER TABLE BI_LOS_GDDS.BI_Alquiler 
 ADD CONSTRAINT FK_alquiler_estado
 FOREIGN KEY (estado_id) REFERENCES BI_LOS_GDDS.BI_Estado_anuncio(id)
+GO
+
+ALTER TABLE BI_LOS_GDDS.BI_Alquiler 
+ADD CONSTRAINT FK_alquiler_rangoEtario
+FOREIGN KEY (rango_etario_inquilino_id) REFERENCES BI_LOS_GDDS.BI_rango_etario(rango_etario_id)
 GO
 
 -- Pago Alquiler
