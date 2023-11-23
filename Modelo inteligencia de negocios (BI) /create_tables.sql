@@ -4,7 +4,7 @@
 
 /* ------------------------------------------ TIPIFICACION ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Propietario(
+CREATE TABLE LOS_GDDS.BI_Propietario(
     id INT PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(20),
@@ -15,24 +15,24 @@ CREATE TABLE BI_LOS_GDDS.BI_Propietario(
     fecha_nacimiento DATETIME
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Disposicion(
+CREATE TABLE LOS_GDDS.BI_Disposicion(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Estado_inmueble(
+CREATE TABLE LOS_GDDS.BI_Estado_inmueble(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Orientacion(
+CREATE TABLE LOS_GDDS.BI_Orientacion(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 /* ------------------------------------------ INMUEBLE ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Inmueble(
+CREATE TABLE LOS_GDDS.BI_Inmueble(
     id NUMERIC(18,0) PRIMARY KEY,
     tipo_inmueble_id INT, --FK
     descripcion NVARCHAR(100),
@@ -47,36 +47,36 @@ CREATE TABLE BI_LOS_GDDS.BI_Inmueble(
     ultima_expensa NUMERIC(18,2),
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Caracteristica_inmueble(
+CREATE TABLE LOS_GDDS.BI_Caracteristica_inmueble(
     caracteristica_id INT, --FK
     inmueble_id NUMERIC(18,0), --FK
     PRIMARY KEY (caracteristica_id, inmueble_id)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Inmueble_Ambiente(
+CREATE TABLE LOS_GDDS.BI_Inmueble_Ambiente(
     inmueble_id NUMERIC(18,0), --FK
     ambiente_id INT, --FK
 	PRIMARY KEY (inmueble_id, ambiente_id)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Caracteristica(
+CREATE TABLE LOS_GDDS.BI_Caracteristica(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Ambiente(
+CREATE TABLE LOS_GDDS.BI_Ambiente(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre nVARCHAR(100)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Tipo_inmueble(
+CREATE TABLE LOS_GDDS.BI_Tipo_inmueble(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 /* ------------------------------------------ VENTA ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Venta(
+CREATE TABLE LOS_GDDS.BI_Venta(
     id NUMERIC(18,0) PRIMARY KEY, ---esto es el codigo
     anuncio_id NUMERIC(18,0) NULL, --FK
     comprador_id INT, --FK
@@ -86,7 +86,7 @@ CREATE TABLE BI_LOS_GDDS.BI_Venta(
     comision NUMERIC(18,2)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Pago_venta(
+CREATE TABLE LOS_GDDS.BI_Pago_venta(
     id INT IDENTITY(1,1) PRIMARY KEY,
     importe NUMERIC(18,2),
     moneda_id INT,      -- FK
@@ -95,7 +95,7 @@ CREATE TABLE BI_LOS_GDDS.BI_Pago_venta(
     venta_id NUMERIC(18,0) -- FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Comprador(
+CREATE TABLE LOS_GDDS.BI_Comprador(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(100),
@@ -106,9 +106,9 @@ CREATE TABLE BI_LOS_GDDS.BI_Comprador(
     fecha_nacimiento DATETIME
 );
 
-/* ------------------------------------------ ANUNCIO ------------------------------------------ */
+-- /* ------------------------------------------ ANUNCIO ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Anuncio(
+CREATE TABLE LOS_GDDS.BI_Anuncio(
     id NUMERIC(18,0) PRIMARY KEY,
     fecha_publicacion DATETIME,
     agente_id NUMERIC(19,0), -- FK
@@ -120,10 +120,11 @@ CREATE TABLE BI_LOS_GDDS.BI_Anuncio(
     estado_id INT, -- FK
     fecha_finalizacion DATE,
     costo_publicacion NUMERIC(18,2),
-    rango_etario_agente_id INT --FK
+    rango_etario_agente_id INT --FK,
+    rango_m2_id INT --FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Agente(
+CREATE TABLE LOS_GDDS.BI_Agente(
     id NUMERIC(19,0) IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
     sucursal_id NUMERIC(18,0) , --FK
@@ -135,56 +136,46 @@ CREATE TABLE BI_LOS_GDDS.BI_Agente(
     fecha_nacimiento DATETIME
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Sucursal(
+CREATE TABLE LOS_GDDS.BI_Sucursal(
     id NUMERIC(18, 0) PRIMARY KEY,
     nombre NVARCHAR(100),
     direccion NVARCHAR(100),
     telefono NVARCHAR(100),
-    localidad_id INT --FK
+    ubicacion_id INT --FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Estado_anuncio(
+CREATE TABLE LOS_GDDS.BI_Estado_anuncio(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Operacion(
+CREATE TABLE LOS_GDDS.BI_Operacion(
   id INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(100)  
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Tipo_periodo(
+CREATE TABLE LOS_GDDS.BI_Tipo_periodo(
   id INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(100)  
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Moneda(
+CREATE TABLE LOS_GDDS.BI_Moneda(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 /* ------------------------------------------ UBICACION ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Provincia(
+CREATE TABLE LOS_GDDS.BI_Ubicacion(
     id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre NVARCHAR(100)
-);
-
-CREATE TABLE BI_LOS_GDDS.BI_Localidad(
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre NVARCHAR(100),
-    provincia_id INT --FK
-);
-
-CREATE TABLE BI_LOS_GDDS.BI_Barrio(
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    nombre NVARCHAR(100),
-    localidad_id INT -- FK
+	provincia NVARCHAR(100),
+    localidad NVARCHAR(100),
+    barrio NVARCHAR(100)
 );
 
 /* ------------------------------------------ ALQUILER ------------------------------------------ */
 
-CREATE TABLE BI_LOS_GDDS.BI_Alquiler(
+CREATE TABLE LOS_GDDS.BI_Alquiler(
     id NUMERIC(18,0) PRIMARY KEY,
     anuncio_id NUMERIC(18,0), -- FK
     inquilino_id INT, -- FK
@@ -199,7 +190,7 @@ CREATE TABLE BI_LOS_GDDS.BI_Alquiler(
     rango_etario_inquilino id INT --FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Pago_alquiler(
+CREATE TABLE LOS_GDDS.BI_Pago_alquiler(
     id NUMERIC(18,0) PRIMARY KEY,
     alquiler_id NUMERIC(18,0), -- FK
     fecha DATETIME,
@@ -211,7 +202,7 @@ CREATE TABLE BI_LOS_GDDS.BI_Pago_alquiler(
     medio_pago_id INT --FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Inquilino(
+CREATE TABLE LOS_GDDS.BI_Inquilino(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(20),
@@ -222,12 +213,12 @@ CREATE TABLE BI_LOS_GDDS.BI_Inquilino(
     fecha_nacimiento DATETIME
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Estado_alquiler(
+CREATE TABLE LOS_GDDS.BI_Estado_alquiler(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Detalle_alquiler(
+CREATE TABLE LOS_GDDS.BI_Detalle_alquiler(
     id INT IDENTITY(1,1) PRIMARY KEY,
     periodo_inicio NUMERIC(18,0),
     periodo_fin NUMERIC(18,0),
@@ -235,7 +226,7 @@ CREATE TABLE BI_LOS_GDDS.BI_Detalle_alquiler(
     alquiler_id NUMERIC(18,0) NULL --FK
 );
 
-CREATE TABLE BI_LOS_GDDS.BI_Medio_pago(
+CREATE TABLE LOS_GDDS.BI_Medio_pago(
     id INT IDENTITY(1,1) PRIMARY KEY,
     nombre NVARCHAR(100)
 );
@@ -243,14 +234,31 @@ CREATE TABLE BI_LOS_GDDS.BI_Medio_pago(
 
 --- COSAS NUEVAS ---
 
-CREATE TABLE BI_LOS_GDDS.BI_RANGO_ETARIO(
+CREATE TABLE LOS_GDDS.BI_RANGO_ETARIO(
 	RANGO_ETARIO_ID INT IDENTITY(1,1) PRIMARY KEY,
 	RANGO_ETARIO_DESCRIPCION nvarchar(255)
 );
 
 
 --- En anuncio la fk ? como con el rango etario del agente ?
-CREATE TABLE BI_LOS_GDDS.BI_RANGO_M2(
+CREATE TABLE LOS_GDDS.BI_RANGO_M2(
     RANGO_M2_ID INT IDENTITY(1,1) PRIMARY KEY,
 	RANGO_M2_DESCRIPCION nvarchar(255)
+);
+
+CREATE TABLE LOS_GDDS.BI_Tipo_Moneda(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.BI_Tipo_Operacion(
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  nombre NVARCHAR(100)  
+);
+
+CREATE TABLE LOS_GDDS.Tiempo (
+    id INT PRIMARY KEY,
+    anio INT,
+    cuatrimestre INT,
+    mes INT
 );
