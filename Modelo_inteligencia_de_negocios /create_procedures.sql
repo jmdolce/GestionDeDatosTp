@@ -74,8 +74,12 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Inmueble
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Inmueble()
-    SELECT * FROM LOS_GDDS.Inmueble
+    INSERT INTO LOS_GDDS.BI_Inmueble(id, tipo_inmueble_id, descripcion, propietario_id, direccion, ubicacion_id, 
+									superficie_total, estado_id, orientacion_id, antiguedad, ultima_expensa)
+    SELECT i.id, i.tipo_inmueble_id, i.descripcion, i.propietario_id, i.direccion, u.id, 
+			i.superficie_total, i.estado_id, i.orientacion_id, i.antiguedad, i.ultima_expensa FROM LOS_GDDS.Inmueble i
+	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
+	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre
 END
 GO
 

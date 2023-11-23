@@ -49,8 +49,8 @@ FOREIGN KEY (propietario_id) REFERENCES LOS_GDDS.BI_Propietario(id)
 GO
 
 ALTER TABLE LOS_GDDS.BI_Inmueble
-ADD CONSTRAINT FK_inmueble_barrio
-FOREIGN KEY (barrio_id) REFERENCES LOS_GDDS.BI_Barrio(id)
+ADD CONSTRAINT FK_inmueble_ubicacion
+FOREIGN KEY (ubicacion_id) REFERENCES LOS_GDDS.BI_Ubicacion(id)
 GO
 
 ALTER TABLE LOS_GDDS.BI_Inmueble
@@ -101,12 +101,6 @@ ADD CONSTRAINT FK_pago_medio
 FOREIGN KEY (medio_pago_id) REFERENCES LOS_GDDS.BI_Medio_pago(id)
 GO
 
--- Ubicacion
-
-ALTER TABLE LOS_GDDS.BI_Localidad 
-ADD CONSTRAINT FK_localidad_provincia
-FOREIGN KEY (provincia_id) REFERENCES LOS_GDDS.BI_Provincia(id)
-GO
 
 -- Alquiler
 ALTER TABLE LOS_GDDS.BI_Alquiler 
