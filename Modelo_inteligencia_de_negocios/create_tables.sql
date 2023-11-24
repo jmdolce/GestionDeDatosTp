@@ -16,17 +16,17 @@ CREATE TABLE LOS_GDDS.BI_Propietario(
 );
 
 CREATE TABLE LOS_GDDS.BI_Disposicion(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.BI_Estado_inmueble(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.BI_Orientacion(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
@@ -60,17 +60,17 @@ CREATE TABLE LOS_GDDS.BI_Inmueble_Ambiente(
 );
 
 CREATE TABLE LOS_GDDS.BI_Caracteristica(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100),
 );
 
 CREATE TABLE LOS_GDDS.BI_Ambiente(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre nVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.BI_Tipo_inmueble(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
@@ -87,7 +87,7 @@ CREATE TABLE LOS_GDDS.BI_Venta(
 );
 
 CREATE TABLE LOS_GDDS.BI_Pago_venta(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     importe NUMERIC(18,2),
     moneda_id INT,      -- FK
     cotizacion NUMERIC(18,2),
@@ -96,7 +96,7 @@ CREATE TABLE LOS_GDDS.BI_Pago_venta(
 );
 
 CREATE TABLE LOS_GDDS.BI_Comprador(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(100),
     dni NUMERIC(18,0),
@@ -120,12 +120,12 @@ CREATE TABLE LOS_GDDS.BI_Anuncio(
     estado_id INT, -- FK
     fecha_finalizacion DATE,
     costo_publicacion NUMERIC(18,2),
-    rango_etario_agente_id INT --FK,
+    rango_etario_agente_id INT, --FK
     rango_m2_id INT --FK
 );
 
 CREATE TABLE LOS_GDDS.BI_Agente(
-    id NUMERIC(19,0) IDENTITY(1,1) PRIMARY KEY,
+    id NUMERIC(19,0)  PRIMARY KEY,
     nombre NVARCHAR(100),
     sucursal_id NUMERIC(18,0) , --FK
     apellido NVARCHAR(100),
@@ -145,22 +145,22 @@ CREATE TABLE LOS_GDDS.BI_Sucursal(
 );
 
 CREATE TABLE LOS_GDDS.BI_Estado_anuncio(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.BI_Tipo_Operacion(
-  id INT IDENTITY(1,1) PRIMARY KEY,
+  id INT  PRIMARY KEY,
   nombre NVARCHAR(100)  
 );
 
 CREATE TABLE LOS_GDDS.BI_Tipo_periodo(
-  id INT IDENTITY(1,1) PRIMARY KEY,
+  id INT  PRIMARY KEY,
   nombre NVARCHAR(100)  
 );
 
-CREATE TABLE LOS_GDDS.BI_Tipo_Moneda(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+CREATE TABLE LOS_GDDS.BI_Tipo_Moneda( 
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
@@ -203,7 +203,7 @@ CREATE TABLE LOS_GDDS.BI_Pago_alquiler(
 );
 
 CREATE TABLE LOS_GDDS.BI_Inquilino(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100),
     apellido NVARCHAR(20),
     dni NUMERIC(18,0),
@@ -214,12 +214,12 @@ CREATE TABLE LOS_GDDS.BI_Inquilino(
 );
 
 CREATE TABLE LOS_GDDS.BI_Estado_alquiler(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 
 CREATE TABLE LOS_GDDS.BI_Detalle_alquiler(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     periodo_inicio NUMERIC(18,0),
     periodo_fin NUMERIC(18,0),
     precio NUMERIC(18,2),
@@ -227,7 +227,7 @@ CREATE TABLE LOS_GDDS.BI_Detalle_alquiler(
 );
 
 CREATE TABLE LOS_GDDS.BI_Medio_pago(
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT  PRIMARY KEY,
     nombre NVARCHAR(100)
 );
 

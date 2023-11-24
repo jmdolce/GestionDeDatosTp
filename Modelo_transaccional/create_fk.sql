@@ -27,6 +27,11 @@ ADD CONSTRAINT FK_anuncio_estado
 FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_anuncio(id)
 GO
 
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_operacion
+FOREIGN KEY (operacion_id) REFERENCES LOS_GDDS.Operacion(id)
+GO
+
 -- Inmueble
 ALTER TABLE LOS_GDDS.Inmueble
 ADD CONSTRAINT FK_inmueble_tipo

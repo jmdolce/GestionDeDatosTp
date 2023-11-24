@@ -20,6 +20,11 @@ IF OBJECT_ID ('LOS_GDD.FK_anuncio_estado', 'F') IS NOT NULL
     ALTER TABLE LOS_GDD.ANUNCIO DROP CONSTRAINT FK_anuncio_estado
 GO 
 
+IF OBJECT_ID ('LOS_GDD.FK_anuncio_operacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDD.ANUNCIO DROP CONSTRAINT FK_anuncio_operacion
+GO 
+
+
 IF OBJECT_ID ('LOS_GDD.FK_inmueble_tipo', 'F') IS NOT NULL
     ALTER TABLE LOS_GDD.Inmueble DROP CONSTRAINT FK_inmueble_tipo
 GO 

@@ -24,7 +24,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Propietario
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Propietario ()
+    INSERT INTO LOS_GDDS.BI_Propietario
     SELECT * FROM LOS_GDDS.Propietario
 END
 GO
@@ -33,7 +33,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Disposicion
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Disposicion ()
+	INSERT INTO LOS_GDDS.BI_Disposicion
 	SELECT * FROM LOS_GDDS.Disposicion
 END
 GO
@@ -41,7 +41,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_EstadoInmueble
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Estado_inmueble ()
+	INSERT INTO LOS_GDDS.BI_Estado_inmueble 
 	SELECT * FROM LOS_GDDS.Estado_inmueble
 END
 GO
@@ -49,7 +49,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Orientacion
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Orientacion ()
+	INSERT INTO LOS_GDDS.BI_Orientacion
 	SELECT * FROM LOS_GDDS.Orientacion
 END
 GO
@@ -57,7 +57,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_TipoInmueble
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Tipo_inmueble()
+	INSERT INTO LOS_GDDS.BI_Tipo_inmueble
 	SELECT * FROM LOS_GDDS.Tipo_inmueble
 END
 GO
@@ -66,7 +66,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Ambiente
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Ambiente()
+    INSERT INTO LOS_GDDS.BI_Ambiente
     SELECT * FROM LOS_GDDS.Ambiente
 END
 GO
@@ -79,6 +79,7 @@ BEGIN
     SELECT i.id, i.tipo_inmueble_id, i.descripcion, i.propietario_id, i.direccion, u.id, 
 			i.superficie_total, i.estado_id, i.orientacion_id, i.antiguedad, i.ultima_expensa FROM LOS_GDDS.Inmueble i
 	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
+	JOIN LOS_GDDS.Localidad l ON b.localidad_id = l.id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre
 END
 GO
@@ -87,7 +88,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_AmbienteInmueble
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Inmueble_Ambiente()
+    INSERT INTO LOS_GDDS.BI_Inmueble_Ambiente
     SELECT * FROM LOS_GDDS.Inmueble_Ambiente
 END
 GO
@@ -97,7 +98,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Caracteristica
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Caracteristica()
+	INSERT INTO LOS_GDDS.BI_Caracteristica
 	SELECT * FROM LOS_GDDS.Caracteristica
 END
 GO
@@ -106,7 +107,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_CaracteristicaInmueble
 AS 
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Caracteristica_inmueble()
+    INSERT INTO LOS_GDDS.BI_Caracteristica_inmueble
 	SELECT * FROM LOS_GDDS.Caracteristica_inmueble
 END
 GO
@@ -118,11 +119,11 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
 AS
 BEGIN
 	INSERT INTO LOS_GDDS.BI_Anuncio
-        (id, fecha_publicacion, agente, inmueble_id, operacion_id, precio_inmueble, moneda_id, 
+        (id, fecha_publicacion, agente_id, inmueble_id, operacion_id, precio_inmueble, moneda_id, 
         periodo_id, estado_id, fecha_finalizacion, costo_publicacion, rango_etario_agente_id, a.rango_m2_id)
-    SELECT  a.id, a.fecha_publicacion, a.agente_id, a.operacion_id, a.precio_inmueble, a.moneda_id, 
-            a.periodo_id, a.estado_id, a.fecha_finalizacion, a.costo_publicacion, BI.FX_CALCULAR_RANGO_ETARIO_AGENTE(a.agente_id),
-            BI.FX_CALCULAR_RANGO_M2(a.inmueble_id) FROM LOS_GDDS.Anuncio a
+    SELECT  a.id, a.fecha_publicacion, a.agente_id, a.inmueble_id, a.operacion_id, a.precio_inmueble, a.moneda_id, 
+            a.periodo_id, a.estado_id, a.fecha_finalizacion, a.costo_publicacion, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO_AGENTE(a.agente_id),
+            LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) FROM LOS_GDDS.Anuncio a
 END
 GO 
 
@@ -144,7 +145,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_TipoPeriodo
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Tipo_periodo ()
+	INSERT INTO LOS_GDDS.BI_Tipo_periodo 
 	SELECT * FROM LOS_GDDS.Tipo_periodo
 END
 GO
@@ -163,7 +164,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Comprador
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Comprador()
+	INSERT INTO LOS_GDDS.BI_Comprador
 	SELECT * FROM LOS_GDDS.Comprador
 END
 GO
@@ -175,7 +176,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_MedioPago
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Medio_pago()
+	INSERT INTO LOS_GDDS.BI_Medio_pago
 
 	SELECT * FROM LOS_GDDS.Medio_pago
 END
@@ -185,7 +186,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_PagoVenta
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Pago_venta()
+	INSERT INTO LOS_GDDS.BI_Pago_venta
 	SELECT * FROM LOS_GDDS.Pago_venta
 END
 GO
@@ -194,7 +195,7 @@ GO
  CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_PagoAlquiler
  AS 
  BEGIN
-	INSERT INTO LOS_GDDS.BI_Pago_alquiler() 	
+	INSERT INTO LOS_GDDS.BI_Pago_alquiler	
     SELECT * FROM LOS_GDDS.Pago_alquiler
  END
  GO
@@ -205,7 +206,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Venta
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Venta()
+	INSERT INTO LOS_GDDS.BI_Venta
 	SELECT * FROM LOS_GDDS.Venta
 END
 GO
@@ -220,7 +221,7 @@ BEGIN
     INSERT INTO LOS_GDDS.BI_Alquiler(id, anuncio_id, inquilino_id, fecha_inicio, fecha_fin, importe, cantidad_periodos, comision, gastos_averiguaciones,
                                     estado_id, deposito, rango_etario_inquilino_id)
 	SELECT a.id, a.anuncio_id, a.inquilino_id, a.fecha_inicio, a.fecha_fin, a.importe, a.cantidad_periodos, a.comision, a.gastos_averiguaciones,
-                                    a.estado_id, a.deposito, BI.FX_CALCULAR_RANGO_ETARIO_INQUILINO(rango_etario_inquilino_id) FROM LOS_GDDS.Alquiler a   
+                                    a.estado_id, a.deposito, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO_INQUILINO(a.inquilino_id) FROM LOS_GDDS.Alquiler a   
 END
 GO
 
@@ -228,7 +229,7 @@ GO
  CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_DetalleAlquiler
  AS 
  BEGIN
- 	INSERT INTO LOS_GDDS.BI_Detalle_alquiler()
+ 	INSERT INTO LOS_GDDS.BI_Detalle_alquiler
  	SELECT * FROM LOS_GDDS.Detalle_alquiler
  END
  GO
@@ -236,7 +237,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Inquilino
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Inquilino()
+	INSERT INTO LOS_GDDS.BI_Inquilino
 	SELECT * FROM LOS_GDDS.Inquilino
 END
 GO
@@ -244,7 +245,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_EstadoAlquiler
 AS 
 BEGIN
-	INSERT INTO LOS_GDDS.BI_Estado_alquiler()
+	INSERT INTO LOS_GDDS.BI_Estado_alquiler
 	SELECT * FROM LOS_GDDS.Estado_alquiler
 END
 GO
