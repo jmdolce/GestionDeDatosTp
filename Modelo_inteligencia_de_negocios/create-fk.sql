@@ -37,9 +37,14 @@ ADD CONSTRAINT FK_BI_anuncio_estado
 FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.BI_Estado_anuncio(id)
 GO
 
-ALTER TABLE LOS_GDDS.Anuncio 
+ALTER TABLE LOS_GDDS.BI_Anuncio 
 ADD CONSTRAINT FK_BI_anuncio_operacion
 FOREIGN KEY (operacion_id) REFERENCES LOS_GDDS.BI_Tipo_Operacion(id)
+GO
+
+ALTER TABLE LOS_GDDS.BI_Anuncio 
+ADD CONSTRAINT FK_BI_anuncio_tiempo
+FOREIGN KEY (tiempo_id) REFERENCES LOS_GDDS.BI_Tiempo(id)
 GO
 
 -- Inmueble

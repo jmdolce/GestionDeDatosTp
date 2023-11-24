@@ -118,7 +118,7 @@ CREATE TABLE LOS_GDDS.Comprador(
 
 CREATE TABLE LOS_GDDS.Anuncio(
     id NUMERIC(18,0) PRIMARY KEY,
-    fecha_publicacion DATETIME,
+    fecha_publicacion DATE,
     agente_id NUMERIC(19,0), -- FK
     inmueble_id NUMERIC(18,0), -- FK
     operacion_id INT, -- FK
@@ -927,7 +927,7 @@ GO
 
 EXEC LOS_GDDS.MIGRAR_Provincia ---OK
 EXEC LOS_GDDS.MIGRAR_Localidad--OK
-EXEC LOS_GDDS.MIGRAR_Barrio--CHEQUEAR
+EXEC LOS_GDDS.MIGRAR_Barrio--OK
 
 EXEC LOS_GDDS.MIGRAR_PROPIETARIO ---OK
 
@@ -962,7 +962,7 @@ EXEC LOS_GDDS.MIGRAR_EstadoAlquiler---OK
 EXEC LOS_GDDS.MIGRAR_Anuncio --OK
 EXEC LOS_GDDS.MIGRAR_Alquiler --OK
 
-EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- hay filas con muchos NULLS
+EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- OK
 EXEC LOS_GDDS.MIGRAR_PagoAlquiler --OK
 
 EXEC LOS_GDDS.MIGRAR_Venta --OK

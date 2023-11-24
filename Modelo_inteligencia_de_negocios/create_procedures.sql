@@ -75,12 +75,13 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Inmueble
 AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_Inmueble(id, tipo_inmueble_id, descripcion, propietario_id, direccion, ubicacion_id, 
-									superficie_total, estado_id, orientacion_id, antiguedad, ultima_expensa)
+									superficie_total, disposicion_id, estado_id, orientacion_id, antiguedad, ultima_expensa)
     SELECT i.id, i.tipo_inmueble_id, i.descripcion, i.propietario_id, i.direccion, u.id, 
-			i.superficie_total, i.estado_id, i.orientacion_id, i.antiguedad, i.ultima_expensa FROM LOS_GDDS.Inmueble i
+			i.superficie_total, i.disposicion_id, i.estado_id, i.orientacion_id, i.antiguedad, i.ultima_expensa FROM LOS_GDDS.Inmueble i
 	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
 	JOIN LOS_GDDS.Localidad l ON b.localidad_id = l.id
-	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre
+	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
+	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 END
 GO
 
@@ -120,16 +121,17 @@ AS
 BEGIN
 	INSERT INTO LOS_GDDS.BI_Anuncio
         (id, fecha_publicacion, agente_id, inmueble_id, operacion_id, precio_inmueble, moneda_id, 
-        periodo_id, estado_id, fecha_finalizacion, costo_publicacion, rango_etario_agente_id, a.rango_m2_id)
+        periodo_id, estado_id, fecha_finalizacion, costo_publicacion, rango_etario_agente_id, rango_m2_id, tiempo_id)
     SELECT  a.id, a.fecha_publicacion, a.agente_id, a.inmueble_id, a.operacion_id, a.precio_inmueble, a.moneda_id, 
             a.periodo_id, a.estado_id, a.fecha_finalizacion, a.costo_publicacion, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO_AGENTE(a.agente_id),
-            LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) FROM LOS_GDDS.Anuncio a
+            LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id), LOS_GDDS.ObtenerIdTiempoPorFecha(a.fecha_publicacion, a.fecha_finalizacion) FROM LOS_GDDS.Anuncio a
 END
 GO 
 
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_EstadoAnuncio
 AS 
 BEGIN
+	INSERT INTO LOS_GDDS.BI_Estado_anuncio
 	SELECT * FROM LOS_GDDS.Estado_anuncio
 END
 GO
@@ -275,6 +277,8 @@ BEGIN
 		VALUES('35-55')
 	INSERT INTO LOS_GDDS.BI_RANGO_M2(RANGO_M2_DESCRIPCION)
 		VALUES('55-75')
+	INSERT INTO LOS_GDDS.BI_RANGO_M2(RANGO_M2_DESCRIPCION)
+		VALUES('75-100')
 	INSERT INTO LOS_GDDS.BI_RANGO_M2(RANGO_M2_DESCRIPCION)
 		VALUES('>100')
 END

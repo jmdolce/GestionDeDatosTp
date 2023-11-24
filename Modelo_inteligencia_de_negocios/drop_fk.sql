@@ -24,6 +24,10 @@ IF OBJECT_ID ('LOS_GDD.FK_BI_anuncio_operacion', 'F') IS NOT NULL
     ALTER TABLE LOS_GDD.BI_ANUNCIO DROP CONSTRAINT FK_BI_anuncio_operacion
 GO 
 
+IF OBJECT_ID ('LOS_GDD.FK_BI_anuncio_tiempo', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDD.BI_ANUNCIO DROP CONSTRAINT FK_BI_anuncio_tiempo
+GO 
+
 IF OBJECT_ID ('LOS_GDD.FK_BI_inmueble_tipo', 'F') IS NOT NULL
     ALTER TABLE LOS_GDD.BI_Inmueble DROP CONSTRAINT FK_BI_inmueble_tipo
 GO 

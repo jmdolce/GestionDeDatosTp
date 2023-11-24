@@ -110,7 +110,7 @@ CREATE TABLE LOS_GDDS.Comprador(
 
 CREATE TABLE LOS_GDDS.Anuncio(
     id NUMERIC(18,0) PRIMARY KEY,
-    fecha_publicacion DATETIME,
+    fecha_publicacion DATE,
     agente_id NUMERIC(19,0), -- FK
     inmueble_id NUMERIC(18,0), -- FK
     operacion_id INT, -- FK
