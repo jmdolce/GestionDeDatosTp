@@ -1,6 +1,6 @@
 --- VISTA 1 ---
 
-CREATE VIEW LOS_GDDS.VIEW_duracion_anuncios_publicados 
+CREATE VIEW LOS_GDDS.Vista_duracion_anuncios_publicados 
 AS
 SELECT 
 	t.anio, 
@@ -20,7 +20,7 @@ GROUP BY t.anio, t.cuatrimestre, op.nombre, u.barrio, iamb.ambiente_id, i.descri
 
 --- VISTA 2 --- 
 
-CREATE VIEW LOS_GDDS.VIEW_precio_promedio_anuncios
+CREATE VIEW LOS_GDDS.Vista_precio_promedio_anuncios
 AS
 SELECT 
 	t.anio, 
@@ -43,7 +43,7 @@ GROUP BY t.anio, t.cuatrimestre, op.nombre, ti.nombre, rm.RANGO_M2_DESCRIPCION, 
 
 --- VISTA 3 --- 
 
-CREATE VIEW LOS_GDDS.VIEW_barrios_mas_elegidos_alquiler
+CREATE VIEW LOS_GDDS.Vista_barrios_mas_elegidos_alquiler
 AS
 SELECT TOP 5
 	t.anio,
@@ -63,7 +63,7 @@ ORDER BY [Cantidad Alquileres] DESC
 
 --- VISTA 4 ---
 
-CREATE VIEW LOS_GDDS.VIEW_PorcentajeIncumplimientoPagos AS
+CREATE VIEW LOS_GDDS.Vista_PorcentajeIncumplimientoPagos AS
 SELECT
     t.anio,
     t.mes,
@@ -84,7 +84,7 @@ ORDER BY t.anio, t.mes
 --- VISTA 5 ---
 
 -- Ningun alquiler que tuvo incremento esta ACTIVO xd
-CREATE VIEW LOS_GDDS.VIEW_PorcentajeIncrementoAlquiler AS
+CREATE VIEW LOS_GDDS.Vista_PorcentajeIncrementoAlquiler AS
 SELECT
     t.anio,
     t.mes,
@@ -102,7 +102,7 @@ ORDER BY t.anio, t.mes
 
 --- VISTA 6 ---
 
-CREATE VIEW LOS_GDDS.VIEW_PrecioPromedioM2
+CREATE VIEW LOS_GDDS.Vista_PrecioPromedioM2
 AS
 SELECT
     t.nombre AS TipoInmueble,
@@ -119,94 +119,82 @@ JOIN LOS_GDDS.BI_Ubicacion u ON i.ubicacion_id = u.id
 JOIN LOS_GDDS.BI_Tiempo t_anio ON DATEPART(YEAR, v.fecha_venta) = t_anio.anio AND DATEPART(QUARTER, v.fecha_venta) = t_anio.cuatrimestre
 
 GROUP BY t.nombre, u.localidad, t_anio.anio, t_anio.cuatrimestre
-
+GO
 
 --- VISTA 7 ---
 
 CREATE VIEW LOS_GDDS.Vista_ValorPromedioComision
 AS
-SELECT
-    ISNULL(o.nombre , '-') AS TipoOperacion,
-    ISNULL(s.nombre ,'-') AS Sucursal,
-    t.anio,
-    t.cuatrimestre,
-    ISNULL(AVG(COALESCE(v.comision, a.comision)), 0) AS ValorPromedioComision
-FROM
-    LOS_GDDS.BI_Venta v
+WITH AnunciosConComision AS (
+    SELECT
+        COALESCE(va.operacion_id, aa.operacion_id) AS operacion_id,
+        COALESCE(ag.sucursal_id, NULL) AS sucursal_id,
+        COALESCE(v.comision, a.comision) AS comision,
+        COALESCE(YEAR(v.fecha_venta), YEAR(a.fecha_inicio)) AS anio,
+        COALESCE(DATEPART(QUARTER, v.fecha_venta), DATEPART(QUARTER, a.fecha_inicio)) AS cuatrimestre
+    FROM LOS_GDDS.BI_Venta v
     FULL JOIN LOS_GDDS.BI_Alquiler a ON v.anuncio_id = a.anuncio_id
     LEFT JOIN LOS_GDDS.BI_Anuncio va ON v.anuncio_id = va.id
     LEFT JOIN LOS_GDDS.BI_Anuncio aa ON a.anuncio_id = aa.id
-    LEFT JOIN LOS_GDDS.BI_Tipo_Operacion o ON COALESCE(va.operacion_id, aa.operacion_id) = o.id
     LEFT JOIN LOS_GDDS.BI_Agente ag ON COALESCE(va.agente_id, aa.agente_id) = ag.id
-    LEFT JOIN LOS_GDDS.BI_Sucursal s ON ag.sucursal_id = s.id
-    RIGHT JOIN LOS_GDDS.BI_Tiempo t ON COALESCE(YEAR(v.fecha_venta), YEAR(a.fecha_inicio)) = t.anio
-                                   AND COALESCE(DATEPART(QUARTER, v.fecha_venta), DATEPART(QUARTER, a.fecha_inicio)) = t.cuatrimestre
-GROUP BY
-    o.nombre,
-    s.nombre,
-    t.anio,
-    t.cuatrimestre
-ORDER BY t.anio, t.cuatrimestre
-
-
-
-
-
---
-CREATE VIEW LOS_GDDS.Vista_ValorPromedioComision
-AS
+)
 SELECT
-    ISNULL(o.nombre , '-') AS TipoOperacion,
+    ISNULL(op.nombre , '-') AS TipoOperacion,
     ISNULL(s.nombre ,'-') AS Sucursal,
     t.anio,
     t.cuatrimestre,
-    ISNULL(AVG(COALESCE(v.comision, a.comision)), 0) AS ValorPromedioComision
-FROM
-    LOS_GDDS.BI_Tipo_Operacion o
-	LEFT JOIN LOS_GDDS.BI_Anuncio va ON va.operacion_id = o.id
-	LEFT JOIN LOS_GDDS.BI_Venta v ON v.anuncio_id = va.id
-    LEFT JOIN LOS_GDDS.BI_Alquiler a ON v.anuncio_id = a.anuncio_id
-    LEFT JOIN LOS_GDDS.BI_Anuncio aa ON a.anuncio_id = aa.id
-	LEFT JOIN LOS_GDDS.BI_Anuncio va ON v.anuncio_id = va.id
-
-    LEFT JOIN LOS_GDDS.BI_Tipo_Operacion o ON COALESCE(va.operacion_id, aa.operacion_id) = o.id
-    LEFT JOIN LOS_GDDS.BI_Agente ag ON COALESCE(va.agente_id, aa.agente_id) = ag.id
-    LEFT JOIN LOS_GDDS.BI_Sucursal s ON ag.sucursal_id = s.id
-    RIGHT JOIN LOS_GDDS.BI_Tiempo t ON COALESCE(YEAR(v.fecha_venta), YEAR(a.fecha_inicio)) = t.anio
-                                   AND COALESCE(DATEPART(QUARTER, v.fecha_venta), DATEPART(QUARTER, a.fecha_inicio)) = t.cuatrimestre
+    ISNULL(AVG(ac.comision), 0) AS ValorPromedioComision
+FROM LOS_GDDS.BI_Tipo_Operacion op
+CROSS JOIN LOS_GDDS.BI_Tiempo t
+LEFT JOIN AnunciosConComision ac ON op.id = ac.operacion_id AND t.anio = ac.anio AND t.cuatrimestre = ac.cuatrimestre
+LEFT JOIN LOS_GDDS.BI_Sucursal s ON s.id = ac.sucursal_id  -- Añadí este JOIN para obtener el nombre de la sucursal
 GROUP BY
-    o.nombre,
+    op.nombre,
     s.nombre,
     t.anio,
     t.cuatrimestre
-ORDER BY t.anio, t.cuatrimestre
+ORDER BY
+    t.anio,
+    t.cuatrimestre,
+    op.nombre,
+    s.nombre;
 
 
+--- VISTA 8 ---
 
-
-
-CREATE VIEW LOS_GDDS.Vista_ValorPromedioComision
-AS
+CREATE VIEW LOS_GDDS.Vista_PorcentajeOperacionesConcretadas
 SELECT
-    tipo_operacion.nombre AS TipoOperacion,
-    sucursal.nombre AS Sucursal,
-    tiempo.anio,
-    COALESCE(tiempo.cuatrimestre, 0) AS cuatrimestre,
-    AVG(COALESCE(venta.comision, alquiler.comision)) AS ValorPromedioComision
+    s.nombre AS Sucursal,
+    ISNULL(e.RANGO_ETARIO_DESCRIPCION, '-') AS RangoEtario,
+    ISNULL(t.anio, '-') AS Anio,
+    ISNULL(COUNT(a.id), 0) AS TotalAnuncios,
+    ISNULL(COUNT(v.id), 0) AS VentasConcretadas,
+    ISNULL(COUNT(al.id), 0) AS AlquileresConcretados,
+    ISNULL(ROUND(CAST(COUNT(v.id) AS DECIMAL) / NULLIF(COUNT(a.id), 0) * 100, 2), 0) AS PorcentajeVentas,
+    ISNULL(ROUND(CAST(COUNT(al.id) AS DECIMAL) / NULLIF(COUNT(a.id), 0) * 100, 2), 0) AS PorcentajeAlquileres
 FROM
-    LOS_GDDS.BI_Tipo_Operacion tipo_operacion
-    LEFT JOIN LOS_GDDS.BI_Venta venta ON tipo_operacion.id = venta.tipo_operacion_id
-    LEFT JOIN LOS_GDDS.BI_Alquiler alquiler ON tipo_operacion.id = alquiler.tipo_operacion_id
-    LEFT JOIN LOS_GDDS.BI_Anuncio anuncio_venta ON venta.anuncio_id = anuncio_venta.id
-    LEFT JOIN LOS_GDDS.BI_Anuncio anuncio_alquiler ON alquiler.anuncio_id = anuncio_alquiler.id
-    LEFT JOIN LOS_GDDS.BI_Agente agente_venta ON anuncio_venta.agente_id = agente_venta.id
-    LEFT JOIN LOS_GDDS.BI_Agente agente_alquiler ON anuncio_alquiler.agente_id = agente_alquiler.id
-    LEFT JOIN LOS_GDDS.BI_Sucursal sucursal ON COALESCE(agente_venta.sucursal_id, agente_alquiler.sucursal_id) = sucursal.id
-    LEFT JOIN LOS_GDDS.BI_Tiempo tiempo ON COALESCE(venta.fecha_venta, alquiler.fecha_inicio) = tiempo.anio
-                                   AND COALESCE(DATEPART(QUARTER, COALESCE(venta.fecha_venta, alquiler.fecha_inicio)), 0) = tiempo.cuatrimestre
+    LOS_GDDS.BI_Sucursal s
+LEFT JOIN
+    LOS_GDDS.BI_Agente ag ON s.id = ag.sucursal_id
+LEFT JOIN
+    LOS_GDDS.BI_Anuncio a ON ag.id = a.agente_id
+RIGHT JOIN
+    LOS_GDDS.BI_Tiempo t ON a.tiempo_id = t.id
+LEFT JOIN
+    LOS_GDDS.BI_Venta v ON a.id = v.anuncio_id
+LEFT JOIN
+    LOS_GDDS.BI_Alquiler al ON a.id = al.anuncio_id
+LEFT JOIN
+    LOS_GDDS.BI_RANGO_ETARIO e ON a.rango_etario_agente_id = e.RANGO_ETARIO_ID
+
 GROUP BY
-    tipo_operacion.nombre,
-    sucursal.nombre,
-    tiempo.anio,
-    tiempo.cuatrimestre;
+    s.nombre,
+    e.RANGO_ETARIO_DESCRIPCION,
+    t.anio
+ORDER BY
+    t.anio,
+    s.nombre,
+    e.RANGO_ETARIO_DESCRIPCION;
+
+--- VISTA 9 ---
 
