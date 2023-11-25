@@ -38,12 +38,12 @@ EXEC LOS_GDDS.MIGRAR_EstadoAlquiler---OK
 EXEC LOS_GDDS.MIGRAR_Anuncio --OK
 EXEC LOS_GDDS.MIGRAR_Alquiler --OK
 
-EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- hay filas con muchos NULLS
+EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- OK
 EXEC LOS_GDDS.MIGRAR_PagoAlquiler --OK
 
 EXEC LOS_GDDS.MIGRAR_Comprador  
 EXEC LOS_GDDS.MIGRAR_Venta --OK
-EXEC LOS_GDDS.MIGRAR_PagoVenta
+EXEC LOS_GDDS.MIGRAR_PagoVenta -- OK
 
 
 

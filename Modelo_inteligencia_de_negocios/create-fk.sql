@@ -133,6 +133,11 @@ ADD CONSTRAINT FK_BI_alquiler_rangoEtario
 FOREIGN KEY (rango_etario_inquilino_id) REFERENCES LOS_GDDS.BI_rango_etario(rango_etario_id)
 GO
 
+ALTER TABLE LOS_GDDS.BI_Alquiler
+ADD CONSTRAINT FK_BI_alquiler_tiempo
+FOREIGN KEY (tiempo_inicio_id) REFERENCES LOS_GDDS.BI_Tiempo(id)
+GO
+
 -- Pago Alquiler
 ALTER TABLE LOS_GDDS.BI_Pago_alquiler
 ADD CONSTRAINT FK_BI_pagoAlquiler_alquiler

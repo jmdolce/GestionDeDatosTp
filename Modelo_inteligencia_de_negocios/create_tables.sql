@@ -188,7 +188,8 @@ CREATE TABLE LOS_GDDS.BI_Alquiler(
     gastos_averiguaciones NUMERIC(18,2),
     estado_id INT, --FK
     deposito NUMERIC(18,2),
-    rango_etario_inquilino_id INT --FK
+    rango_etario_inquilino_id INT, --FK
+    tiempo_inicio_id INT -- FK
 );
 
 CREATE TABLE LOS_GDDS.BI_Pago_alquiler(

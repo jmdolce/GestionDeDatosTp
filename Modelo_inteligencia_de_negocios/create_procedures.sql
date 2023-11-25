@@ -221,9 +221,10 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Alquiler
 AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_Alquiler(id, anuncio_id, inquilino_id, fecha_inicio, fecha_fin, importe, cantidad_periodos, comision, gastos_averiguaciones,
-                                    estado_id, deposito, rango_etario_inquilino_id)
+                                    estado_id, deposito, rango_etario_inquilino_id, tiempo_inicio_id)
 	SELECT a.id, a.anuncio_id, a.inquilino_id, a.fecha_inicio, a.fecha_fin, a.importe, a.cantidad_periodos, a.comision, a.gastos_averiguaciones,
-                                    a.estado_id, a.deposito, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO_INQUILINO(a.inquilino_id) FROM LOS_GDDS.Alquiler a   
+                                    a.estado_id, a.deposito, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO_INQUILINO(a.inquilino_id), 
+									LOS_GDDS.ObtenerIdTiempoPorFecha(a.fecha_inicio, a.fecha_inicio) FROM LOS_GDDS.Alquiler a   
 END
 GO
 
