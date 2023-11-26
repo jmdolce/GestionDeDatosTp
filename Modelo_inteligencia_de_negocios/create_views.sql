@@ -17,7 +17,7 @@ JOIN LOS_GDDS.BI_Inmueble i ON i.id = a.inmueble_id
 JOIN LOS_GDDS.BI_Ubicacion u ON u.id = i.ubicacion_id 
 JOIN LOS_GDDS.BI_Inmueble_Ambiente iamb ON iamb.inmueble_id = i.id
 GROUP BY t.anio, t.cuatrimestre, op.nombre, u.barrio, iamb.ambiente_id, i.descripcion
-
+GO
 --- VISTA 2 --- 
 
 CREATE VIEW LOS_GDDS.Vista_precio_promedio_anuncios
@@ -39,7 +39,7 @@ JOIN LOS_GDDS.BI_Tipo_inmueble ti ON i.tipo_inmueble_id = ti.id
 JOIN LOS_GDDS.BI_RANGO_M2 rm ON a.rango_m2_id = rm.RANGO_M2_ID
 JOIN LOS_GDDS.BI_Tipo_Moneda tm ON a.moneda_id = tm.id
 GROUP BY t.anio, t.cuatrimestre, op.nombre, ti.nombre, rm.RANGO_M2_DESCRIPCION, tm.nombre
-
+GO
 
 --- VISTA 3 --- 
 
@@ -60,6 +60,7 @@ JOIN LOS_GDDS.BI_Inmueble im ON an.inmueble_id = im.id
 JOIN LOS_GDDS.BI_Ubicacion u ON im.ubicacion_id = u.id
 GROUP BY t.anio, t.cuatrimestre, re.RANGO_ETARIO_DESCRIPCION, u.barrio
 ORDER BY [Cantidad Alquileres] DESC
+GO
 
 --- VISTA 4 ---
 
@@ -71,15 +72,13 @@ SELECT
     ISNULL(SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END), 0) AS PagosIncumplidos,
     ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(pa.id), 0) AS PorcentajeIncumplimiento
 	
-FROM
-    LOS_GDDS.BI_Tiempo t
-LEFT JOIN
-    LOS_GDDS.BI_Pago_alquiler pa ON YEAR(pa.fecha) = t.anio AND MONTH(pa.fecha) = t.mes
-LEFT JOIN
-    LOS_GDDS.BI_Alquiler al ON pa.alquiler_id = al.id
+FROM LOS_GDDS.BI_Tiempo t
+LEFT JOIN LOS_GDDS.BI_Pago_alquiler pa ON YEAR(pa.fecha) = t.anio AND MONTH(pa.fecha) = t.mes
+LEFT JOIN LOS_GDDS.BI_Alquiler al ON pa.alquiler_id = al.id
 
 GROUP BY t.anio, t.mes
 ORDER BY t.anio, t.mes
+GO
 
 --- VISTA 5 ---
 
@@ -98,7 +97,7 @@ JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.n
 
 GROUP BY t.anio, t.mes
 ORDER BY t.anio, t.mes
-
+GO
 
 --- VISTA 6 ---
 
@@ -148,17 +147,10 @@ FROM LOS_GDDS.BI_Tipo_Operacion op
 CROSS JOIN LOS_GDDS.BI_Tiempo t
 LEFT JOIN AnunciosConComision ac ON op.id = ac.operacion_id AND t.anio = ac.anio AND t.cuatrimestre = ac.cuatrimestre
 LEFT JOIN LOS_GDDS.BI_Sucursal s ON s.id = ac.sucursal_id  -- Añadí este JOIN para obtener el nombre de la sucursal
-GROUP BY
-    op.nombre,
-    s.nombre,
-    t.anio,
-    t.cuatrimestre
-ORDER BY
-    t.anio,
-    t.cuatrimestre,
-    op.nombre,
-    s.nombre;
 
+GROUP BY op.nombre, s.nombre, t.anio, t.cuatrimestre
+ORDER BY t.anio, t.cuatrimestre, op.nombre, s.nombre
+GO
 
 --- VISTA 8 ---
 
@@ -187,14 +179,29 @@ LEFT JOIN
 LEFT JOIN
     LOS_GDDS.BI_RANGO_ETARIO e ON a.rango_etario_agente_id = e.RANGO_ETARIO_ID
 
-GROUP BY
-    s.nombre,
-    e.RANGO_ETARIO_DESCRIPCION,
-    t.anio
-ORDER BY
-    t.anio,
-    s.nombre,
-    e.RANGO_ETARIO_DESCRIPCION;
+GROUP BY s.nombre, e.RANGO_ETARIO_DESCRIPCION, t.anio
+ORDER BY t.anio, s.nombre, e.RANGO_ETARIO_DESCRIPCION
+GO
 
 --- VISTA 9 ---
 
+CREATE VIEW LOS_GDDS.Vista_MontoCierreContratos
+AS
+SELECT
+    s.nombre AS Sucursal,
+    t.anio AS Anio,
+    COALESCE(t.cuatrimestre, 0) AS cuatrimestre,
+    o.nombre AS TipoOperacion,
+    m.nombre AS TipoMoneda,
+    SUM(COALESCE(v.precio, a.importe)) AS MontoTotal
+
+FROM LOS_GDDS.BI_Tiempo t
+CROSS JOIN LOS_GDDS.BI_Sucursal s
+CROSS JOIN LOS_GDDS.BI_Tipo_Operacion o
+CROSS JOIN LOS_GDDS.BI_Tipo_Moneda m
+LEFT JOIN LOS_GDDS.BI_Anuncio va ON s.id = va.agente_id
+LEFT JOIN LOS_GDDS.BI_Venta v ON va.id = v.anuncio_id AND o.id = va.operacion_id AND m.id = v.moneda_id
+LEFT JOIN LOS_GDDS.BI_Alquiler a ON va.id = a.anuncio_id AND o.id = va.operacion_id AND m.id = a.moneda_id
+
+GROUP BY s.nombre, t_anio.anio, t_anio.cuatrimestre, o.nombre, m.nombre
+GO
