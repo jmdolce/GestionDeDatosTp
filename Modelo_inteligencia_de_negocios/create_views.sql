@@ -193,15 +193,18 @@ SELECT
     COALESCE(t.cuatrimestre, 0) AS cuatrimestre,
     o.nombre AS TipoOperacion,
     m.nombre AS TipoMoneda,
-    SUM(COALESCE(v.precio, a.importe)) AS MontoTotal
+    SUM(COALESCE(ISNULL(v.precio, a.importe), 0)) AS MontoTotal
 
 FROM LOS_GDDS.BI_Tiempo t
 CROSS JOIN LOS_GDDS.BI_Sucursal s
 CROSS JOIN LOS_GDDS.BI_Tipo_Operacion o
 CROSS JOIN LOS_GDDS.BI_Tipo_Moneda m
-LEFT JOIN LOS_GDDS.BI_Anuncio va ON s.id = va.agente_id
-LEFT JOIN LOS_GDDS.BI_Venta v ON va.id = v.anuncio_id AND o.id = va.operacion_id AND m.id = v.moneda_id
-LEFT JOIN LOS_GDDS.BI_Alquiler a ON va.id = a.anuncio_id AND o.id = va.operacion_id AND m.id = a.moneda_id
+LEFT JOIN LOS_GDDS.BI_Agente ag ON s.id = ag.sucursal_id
+LEFT JOIN LOS_GDDS.BI_Anuncio va ON ag.id = va.agente_id
+LEFT JOIN LOS_GDDS.BI_Venta v ON va.id = v.anuncio_id 
+LEFT JOIN LOS_GDDS.BI_Alquiler a ON va.id = a.anuncio_id 
 
-GROUP BY s.nombre, t_anio.anio, t_anio.cuatrimestre, o.nombre, m.nombre
-GO
+GROUP BY s.nombre, t.anio, t.cuatrimestre, o.nombre, m.nombre, v.id, a.id;
+
+GO	
+
