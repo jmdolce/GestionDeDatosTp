@@ -179,9 +179,9 @@ LEFT JOIN
 LEFT JOIN
     LOS_GDDS.BI_Alquiler al ON a.id = al.anuncio_id AND al.tiempo_inicio_id = t.id
 GROUP BY
-    s.nombre, e.RANGO_ETARIO_DESCRIPCION, t.anio
+    s.nombre, e.RANGO_ETARIO_ID, e.RANGO_ETARIO_DESCRIPCION, t.anio
 ORDER BY
-    t.anio, e.RANGO_ETARIO_DESCRIPCION, s.nombre
+    t.anio, e.RANGO_ETARIO_ID, s.nombre
 GO
 
 --- VISTA 9 ---
