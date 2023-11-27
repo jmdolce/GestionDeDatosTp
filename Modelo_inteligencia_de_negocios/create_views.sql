@@ -154,33 +154,34 @@ GO
 
 --- VISTA 8 ---
 
-CREATE VIEW LOS_GDDS.Vista_PorcentajeOperacionesConcretadas
+CREATE VIEW LOS_GDDS.Vista_PorcentajeOperacionesConcretadas AS
 SELECT
     s.nombre AS Sucursal,
-    ISNULL(e.RANGO_ETARIO_DESCRIPCION, '-') AS RangoEtario,
-    ISNULL(t.anio, '-') AS Anio,
-    ISNULL(COUNT(a.id), 0) AS TotalAnuncios,
-    ISNULL(COUNT(v.id), 0) AS VentasConcretadas,
-    ISNULL(COUNT(al.id), 0) AS AlquileresConcretados,
+    e.RANGO_ETARIO_DESCRIPCION AS RangoEtario,
+    t.anio AS Anio,
+    COUNT(a.id) AS TotalAnuncios,
+    COUNT(v.id) AS VentasConcretadas,
+    COUNT(al.id) AS AlquileresConcretados,
     ISNULL(ROUND(CAST(COUNT(v.id) AS DECIMAL) / NULLIF(COUNT(a.id), 0) * 100, 2), 0) AS PorcentajeVentas,
     ISNULL(ROUND(CAST(COUNT(al.id) AS DECIMAL) / NULLIF(COUNT(a.id), 0) * 100, 2), 0) AS PorcentajeAlquileres
 FROM
     LOS_GDDS.BI_Sucursal s
+CROSS JOIN
+    LOS_GDDS.BI_RANGO_ETARIO e
+CROSS JOIN
+    LOS_GDDS.BI_Tiempo t
 LEFT JOIN
     LOS_GDDS.BI_Agente ag ON s.id = ag.sucursal_id
 LEFT JOIN
-    LOS_GDDS.BI_Anuncio a ON ag.id = a.agente_id
-RIGHT JOIN
-    LOS_GDDS.BI_Tiempo t ON a.tiempo_id = t.id
+    LOS_GDDS.BI_Anuncio a ON ag.id = a.agente_id AND a.tiempo_id = t.id
 LEFT JOIN
     LOS_GDDS.BI_Venta v ON a.id = v.anuncio_id
 LEFT JOIN
-    LOS_GDDS.BI_Alquiler al ON a.id = al.anuncio_id
-LEFT JOIN
-    LOS_GDDS.BI_RANGO_ETARIO e ON a.rango_etario_agente_id = e.RANGO_ETARIO_ID
-
-GROUP BY s.nombre, e.RANGO_ETARIO_DESCRIPCION, t.anio
-ORDER BY t.anio, s.nombre, e.RANGO_ETARIO_DESCRIPCION
+    LOS_GDDS.BI_Alquiler al ON a.id = al.anuncio_id AND al.tiempo_inicio_id = t.id
+GROUP BY
+    s.nombre, e.RANGO_ETARIO_DESCRIPCION, t.anio
+ORDER BY
+    t.anio, e.RANGO_ETARIO_DESCRIPCION, s.nombre
 GO
 
 --- VISTA 9 ---
@@ -204,7 +205,7 @@ LEFT JOIN LOS_GDDS.BI_Anuncio va ON ag.id = va.agente_id
 LEFT JOIN LOS_GDDS.BI_Venta v ON va.id = v.anuncio_id 
 LEFT JOIN LOS_GDDS.BI_Alquiler a ON va.id = a.anuncio_id 
 
-GROUP BY s.nombre, t.anio, t.cuatrimestre, o.nombre, m.nombre, v.id, a.id;
+GROUP BY s.nombre, t.anio, t.cuatrimestre, o.nombre, m.nombre
 
 GO	
 
