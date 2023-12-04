@@ -246,15 +246,3 @@ BEGIN
     JOIN LOS_GDDS.BI_Ubicacion u ON l.nombre = u.localidad
 END
 GO 
-
-
-
-
-
-
-
-
-
-
-
-
