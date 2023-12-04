@@ -242,7 +242,6 @@ CREATE TABLE LOS_GDDS.BI_RANGO_ETARIO(
 );
 
 
---- En anuncio la fk ? como con el rango etario del agente ?
 CREATE TABLE LOS_GDDS.BI_RANGO_M2(
     RANGO_M2_ID INT IDENTITY(1,1) PRIMARY KEY,
 	RANGO_M2_DESCRIPCION nvarchar(255)
