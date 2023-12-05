@@ -127,11 +127,11 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Alquiler
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Alquiler
+    INSERT INTO LOS_GDDS.BI_Alquiler                                     -- quienes serian los empleados en este caso ??
 	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(in.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(emp.fecha_nacimiento), u.id,
 	o.id, s.id, -- cantidad alquileres activos (puede ser un subselect o una funcion) ?,
 	-- porcentaje_pagos_fuera_termino ?? 
-	-- cantidad_pagos ??
+	SUM(CASE WHEN pa.importe > pant.importe AND ea.nombre = 'Activo' THEN ((pa.importe - pant.importe) / pant.importe) * 100 ELSE 0 END) -- cantidad_pagos ??
 		
 	FROM LOS_GDDS.Alquiler a   
 	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, a.fecha_inicio) = t.anio AND DATEPART(MONTH, a.fecha_inicio) = t.mes
