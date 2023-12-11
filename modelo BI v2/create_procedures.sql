@@ -127,30 +127,52 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Alquiler
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_Alquiler                                     -- quienes serian los empleados en este caso ??
-	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(in.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(emp.fecha_nacimiento), u.id,
-	o.id, s.id, -- cantidad alquileres activos (puede ser un subselect o una funcion) ?,
-	-- porcentaje_pagos_fuera_termino ?? 
-	SUM(CASE WHEN pa.importe > pant.importe AND ea.nombre = 'Activo' THEN ((pa.importe - pant.importe) / pant.importe) * 100 ELSE 0 END) -- cantidad_pagos ??
+    INSERT INTO LOS_GDDS.BI_Alquiler                                     
+	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id,
+	o.id, s.id,
+	ISNULL(SUM(CASE WHEN ea.nombre = 'Activo' THEN 1 ELSE 0 END), 0), -- cantidad alquileres activos 
+	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0),
+	COUNT(DISTINCT pa.id) -- cantidad_pagos 
 		
 	FROM LOS_GDDS.Alquiler a   
 	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, a.fecha_inicio) = t.anio AND DATEPART(MONTH, a.fecha_inicio) = t.mes
-	JOIN LOS_GDDS.Alquiler al ON al.id = a.alquiler_id
-	JOIN LOS_GDDS.Inquilino in ON al.inquilino_id = in.id
-	-- empleado ???
+	JOIN LOS_GDDS.Alquiler al ON al.id = a.id
+	JOIN LOS_GDDS.Inquilino inq ON al.inquilino_id = inq.id
 
-	JOIN LOS_GDDS.Inmueble i ON i.id = a.inmueble_id
+	JOIN LOS_GDDS.Anuncio an ON an.id = a.anuncio_id
+	JOIN LOS_GDDS.Inmueble i ON i.id = an.inmueble_id
+	JOIN LOS_GDDS.Agente ag ON ag.id = an.agente_id		
+	JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
 	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
 	JOIN LOS_GDDS.Localidad l ON b.localidad_id = l.id
 	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 
-	JOIN LOS_GDDS.BI_Tipo_Operacion o ON o.id = a.operacion_id
-	JOIN LOS_GDDS.BI_Sucursal s ON s.id = a.sucursal_id
+	JOIN LOS_GDDS.BI_Tipo_Operacion o ON o.id = an.operacion_id
+	JOIN LOS_GDDS.Pago_alquiler pa ON pa.alquiler_id = a.id
+    JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = a.estado_id
+											
 	
-	GROUP BY t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(in.fecha_nacimiento), u.id, o.id, s.id
+	GROUP BY t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id, o.id, s.id
 END
 GO
+
+
+
+
+-- TODO
+CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
+AS
+BEGIN
+    INSERT INTO LOS_GDDS.BI_PagoAlquiler
+    SELECT * 
+
+	
+
+END
+GO
+
+
 
 
 
@@ -159,29 +181,19 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_PagoAlquiler
 AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_PagoAlquiler
-    SELECT * 
+    SELECT t.id, 
+    AVG((pa.importe - pant.importe) / pant.importe * 100), -- promedio aumento
+    COUNT(*) -- cant pagos
 
-	FROM LOS_GDDS.Pago_alquiler pa
-	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, pa.fecha_inicio_periodo) = t.anio AND DATEPART(MONTH, pa.fecha_inicio_periodo) = t.mes 
-	JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.num_periodo = pa.num_periodo - 1 -- y habria que verificar que el anio sea el mismo, creo
-
-END
-GO
-
-
-
-
-CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
-AS
-BEGIN
-    INSERT INTO LOS_GDDS.BI_Anuncio
-    SELECT
+	FROM LOS_GDDS.BI_Tiempo t
     
-
-
+	LEFT JOIN LOS_GDDS.Pago_alquiler pa ON DATEPART(YEAR, pa.fecha_inicio_periodo) = t.anio AND DATEPART(MONTH, pa.fecha_inicio_periodo) = t.mes 
+	JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.num_periodo = pa.num_periodo - 1
+	 
+    GROUP BY t.id 
+	ORDER BY t.id
 END
 GO
-
 
 
 
