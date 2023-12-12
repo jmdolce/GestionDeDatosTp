@@ -129,7 +129,7 @@ AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_Alquiler                                     
 	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id,
-	o.id, s.id,
+	an.operacion_id, s.id,
 	ISNULL(SUM(CASE WHEN ea.nombre = 'Activo' THEN 1 ELSE 0 END), 0), -- cantidad alquileres activos 
 	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0),
 	COUNT(DISTINCT pa.id) -- cantidad_pagos 
@@ -148,11 +148,9 @@ BEGIN
 	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 
-	JOIN LOS_GDDS.BI_Tipo_Operacion o ON o.id = an.operacion_id
 	JOIN LOS_GDDS.Pago_alquiler pa ON pa.alquiler_id = a.id
     JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = a.estado_id
 											
-	
 	GROUP BY t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id, o.id, s.id
 END
 GO
@@ -160,13 +158,25 @@ GO
 
 
 
--- TODO
+
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.BI_PagoAlquiler
-    SELECT * 
+    INSERT INTO LOS_GDDS.BI_Anuncio
+    SELECT a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.in
+	FROM LOS_GDDS.Anuncio a
 
+	JOIN LOS_GDDS.Inmueble i ON i.id = a.inmueble_id
+	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
+	JOIN LOS_GDDS.Localidad l ON b.localidad_id = l.id
+	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
+	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
+
+	JOIN LOS_GDDS.Inmueble_Ambiente inam ON inam.inmueble_id = i.id
+	JOIN LOS_GDDS.Ambiente amb ON amb.id = inam.ambiente_id
+
+	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
+	
 	
 
 END
@@ -182,8 +192,8 @@ AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_PagoAlquiler
     SELECT t.id, 
-    AVG((pa.importe - pant.importe) / pant.importe * 100), -- promedio aumento
-    COUNT(*) -- cant pagos
+    	AVG((pa.importe - pant.importe) / pant.importe * 100), -- promedio aumento
+    	COUNT(*) -- cant pagos
 
 	FROM LOS_GDDS.BI_Tiempo t
     
