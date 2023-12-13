@@ -104,7 +104,9 @@ AS
 BEGIN
 	INSERT INTO LOS_GDDS.BI_Venta
 	SELECT v.id, t.id, ti.id, s.id, u.id, m.id, COUNT(DISTINCT v.id), AVG(a.precio_inmueble) 
-    FROM LOS_GDDS.Venta v
+    FROM LOS_GDDS.BI_Tiempo t  
+	LEFT JOIN LOS_GDDS.Venta v ON DATEPART(YEAR, v.fecha_venta) = t.anio AND DATEPART(MONTH, v.fecha_venta) = t.mes
+
     JOIN LOS_GDDS.Anuncio a ON v.anuncio_id = a.id
     JOIN LOS_GDDS.Inmueble i ON a.inmueble_id = i.id 
     JOIN LOS_GDDS.Tipo_inmueble ti ON i.tipo_inmueble_id = ti.id
@@ -115,7 +117,6 @@ BEGIN
 	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 
-    JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, v.fecha_venta) = t.anio AND DATEPART(MONTH, v.fecha_venta) = t.mes
     JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
     JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
     GROUP BY t.id, i.id, u.id, m.id, s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) -- agrupo por las FK
@@ -134,8 +135,8 @@ BEGIN
 	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0),
 	COUNT(DISTINCT pa.id) -- cantidad_pagos 
 		
-	FROM LOS_GDDS.Alquiler a   
-	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, a.fecha_inicio) = t.anio AND DATEPART(MONTH, a.fecha_inicio) = t.mes
+	FROM LOS_GDDS.BI_Tiempo t    
+	LEFT JOIN LOS_GDDS.Alquiler a ON DATEPART(YEAR, a.fecha_inicio) = t.anio AND DATEPART(MONTH, a.fecha_inicio) = t.mes
 	JOIN LOS_GDDS.Alquiler al ON al.id = a.id
 	JOIN LOS_GDDS.Inquilino inq ON al.inquilino_id = inq.id
 
@@ -151,7 +152,7 @@ BEGIN
 	JOIN LOS_GDDS.Pago_alquiler pa ON pa.alquiler_id = a.id
     JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = a.estado_id
 											
-	GROUP BY t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id, o.id, s.id
+	GROUP BY t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id, an.operacion_id, s.id
 END
 GO
 
@@ -163,8 +164,16 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
 AS
 BEGIN
     INSERT INTO LOS_GDDS.BI_Anuncio
-    SELECT a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.in
-	FROM LOS_GDDS.Anuncio a
+    SELECT a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, 
+		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id),
+		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)), -- cantidad_dias_promedio_publicado
+		AVG(a.precio_inmueble), -- precio_promedio_inmuebles
+		COUNT(DISTINCT a.id), -- cantidad_anuncios
+		SUM(v.precio) + SUM(al.importe), -- monto_operaciones
+		COUNT(DISTINCT v.id) + COUNT(DISTINCT al.id), -- cantidad_operaciones_concretadas
+		(AVG(v.comision) + AVG(al.comision)) / 2 -- promedio_comision
+	FROM LOS_GDDS.BI_Tiempo t  
+	LEFT JOIN LOS_GDDS.Anuncio a ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
 
 	JOIN LOS_GDDS.Inmueble i ON i.id = a.inmueble_id
 	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
@@ -175,14 +184,17 @@ BEGIN
 	JOIN LOS_GDDS.Inmueble_Ambiente inam ON inam.inmueble_id = i.id
 	JOIN LOS_GDDS.Ambiente amb ON amb.id = inam.ambiente_id
 
-	JOIN LOS_GDDS.BI_Tiempo t ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
-	
-	
+	JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
+	JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
 
+	-- operaciones (venta + alquiler)
+	JOIN LOS_GDDS.Alquiler al ON a.id = al.anuncio_id
+	FULL JOIN LOS_GDDS.Venta v ON v.anuncio_id = a.id
+
+	GROUP BY t.id, a.operacion_id, u.id, amb.id, i.tipo_inmueble_id, a.moneda_id, 
+		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id)
 END
 GO
-
-
 
 
 
