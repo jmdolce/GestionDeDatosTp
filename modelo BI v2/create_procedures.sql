@@ -103,7 +103,7 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Venta
 AS 
 BEGIN
 	INSERT INTO LOS_GDDS.BI_Venta
-	SELECT v.id, t.id, ti.id, s.id, u.id, m.id, COUNT(DISTINCT v.id), AVG(a.precio_inmueble) 
+	SELECT t.id, ti.id, s.id, u.id, m.id, COUNT(DISTINCT v.id), AVG(a.precio_inmueble) 
     FROM LOS_GDDS.BI_Tiempo t  
 	LEFT JOIN LOS_GDDS.Venta v ON DATEPART(YEAR, v.fecha_venta) = t.anio AND DATEPART(MONTH, v.fecha_venta) = t.mes
 
@@ -119,7 +119,7 @@ BEGIN
 
     JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
     JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
-    GROUP BY t.id, i.id, u.id, m.id, s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) -- agrupo por las FK
+    GROUP BY t.id, ti.id, s.id, u.id, m.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) -- agrupo por las FK
 END
 GO
 
@@ -169,9 +169,9 @@ BEGIN
 		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)), -- cantidad_dias_promedio_publicado
 		AVG(a.precio_inmueble), -- precio_promedio_inmuebles
 		COUNT(DISTINCT a.id), -- cantidad_anuncios
-		SUM(v.precio) + SUM(al.importe), -- monto_operaciones
+		SUM(ISNULL(v.precio, 0)) + SUM(ISNULL(al.importe,0)), -- monto_operaciones
 		COUNT(DISTINCT v.id) + COUNT(DISTINCT al.id), -- cantidad_operaciones_concretadas
-		(AVG(v.comision) + AVG(al.comision)) / 2 -- promedio_comision
+		(AVG(ISNULL(v.comision,0)) + AVG(ISNULL(al.comision,0))) / 2 -- promedio_comision
 	FROM LOS_GDDS.BI_Tiempo t  
 	LEFT JOIN LOS_GDDS.Anuncio a ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
 
@@ -190,6 +190,8 @@ BEGIN
 	-- operaciones (venta + alquiler)
 	JOIN LOS_GDDS.Alquiler al ON a.id = al.anuncio_id
 	FULL JOIN LOS_GDDS.Venta v ON v.anuncio_id = a.id
+
+	WHERE a.id IS NOT NULL -- para evitar las filas en null
 
 	GROUP BY t.id, a.operacion_id, u.id, amb.id, i.tipo_inmueble_id, a.moneda_id, 
 		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id)
