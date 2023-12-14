@@ -162,6 +162,7 @@ BEGIN
     JOIN LOS_GDDS.Disposicion d ON m.INMUEBLE_DISPOSICION = d.nombre
     JOIN LOS_GDDS.Estado_inmueble e ON m.INMUEBLE_ESTADO = e.nombre
     JOIN LOS_GDDS.Orientacion o ON m.INMUEBLE_ORIENTACION = o.nombre
+    -- TODO: hacer registro de localidad 
     JOIN LOS_GDDS.Barrio b ON m.INMUEBLE_BARRIO = b.nombre
     JOIN LOS_GDDS.Tipo_inmueble ti ON m.INMUEBLE_TIPO_INMUEBLE = ti.nombre
     WHERE INMUEBLE_CODIGO IS NOT NULL

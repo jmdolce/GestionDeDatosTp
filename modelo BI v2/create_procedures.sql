@@ -39,9 +39,9 @@ BEGIN
 	INSERT INTO LOS_GDDS.BI_RANGO_ETARIO(RANGO_ETARIO_DESCRIPCION)
 		VALUES('25-35')
 	INSERT INTO LOS_GDDS.BI_RANGO_ETARIO(RANGO_ETARIO_DESCRIPCION)
-		VALUES('35-55')
+		VALUES('35-50')
 	INSERT INTO LOS_GDDS.BI_RANGO_ETARIO(RANGO_ETARIO_DESCRIPCION)
-		VALUES('>55')
+		VALUES('>50')
 END
 GO
 
@@ -132,10 +132,10 @@ BEGIN
 	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id,
 	an.operacion_id, s.id,
 	ISNULL(SUM(CASE WHEN ea.nombre = 'Activo' THEN 1 ELSE 0 END), 0), -- cantidad alquileres activos 
-	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0),
+	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0), -- porcentaje_pagos_fuera_termino
 	COUNT(DISTINCT pa.id) -- cantidad_pagos 
 		
-	FROM LOS_GDDS.BI_Tiempo t    
+	FROM LOS_GDDS.BI_Tiempo t   -- TODO: el LEFT JOIN no me devuelve todos los tiempos (e.g. el tiempo con id 10 no esta en la tabla de alquiler BI) 
 	LEFT JOIN LOS_GDDS.Alquiler a ON DATEPART(YEAR, a.fecha_inicio) = t.anio AND DATEPART(MONTH, a.fecha_inicio) = t.mes
 	JOIN LOS_GDDS.Alquiler al ON al.id = a.id
 	JOIN LOS_GDDS.Inquilino inq ON al.inquilino_id = inq.id
@@ -158,8 +158,6 @@ GO
 
 
 
-
-
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
 AS
 BEGIN
@@ -171,7 +169,7 @@ BEGIN
 		COUNT(DISTINCT a.id), -- cantidad_anuncios
 		SUM(ISNULL(v.precio, 0)) + SUM(ISNULL(al.importe,0)), -- monto_operaciones
 		COUNT(DISTINCT v.id) + COUNT(DISTINCT al.id), -- cantidad_operaciones_concretadas
-		(AVG(ISNULL(v.comision,0)) + AVG(ISNULL(al.comision,0))) / 2 -- promedio_comision
+		AVG(ISNULL(v.comision,0)) + AVG(ISNULL(al.comision,0)) -- promedio_comision
 	FROM LOS_GDDS.BI_Tiempo t  
 	LEFT JOIN LOS_GDDS.Anuncio a ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
 
@@ -207,13 +205,15 @@ BEGIN
     INSERT INTO LOS_GDDS.BI_PagoAlquiler
     SELECT t.id, 
     	AVG((pa.importe - pant.importe) / pant.importe * 100), -- promedio aumento
-    	COUNT(*) -- cant pagos
+    	COUNT(DISTINCT pa.id) -- cant pagos
 
 	FROM LOS_GDDS.BI_Tiempo t
     
 	LEFT JOIN LOS_GDDS.Pago_alquiler pa ON DATEPART(YEAR, pa.fecha_inicio_periodo) = t.anio AND DATEPART(MONTH, pa.fecha_inicio_periodo) = t.mes 
 	JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.num_periodo = pa.num_periodo - 1
-	 
+	JOIN LOS_GDDS.ALquiler al ON al.id = pa.alquiler_id
+	JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = al.estado_id
+	WHERE pa.importe > pant.importe AND ea.nombre = 'Activo'
     GROUP BY t.id 
 	ORDER BY t.id
 END
