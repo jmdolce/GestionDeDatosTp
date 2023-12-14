@@ -179,9 +179,8 @@ BEGIN
 	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 
-	JOIN LOS_GDDS.Inmueble_Ambiente inam ON inam.inmueble_id = i.id
-	JOIN LOS_GDDS.Ambiente amb ON amb.id = inam.ambiente_id
-
+	JOIN LOS_GDDS.Ambiente amb ON amb.id = i.ambiente_id
+	
 	JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
 	JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
 
