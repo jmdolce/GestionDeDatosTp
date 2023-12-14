@@ -98,10 +98,6 @@ GO
 
 -- Drop tables with dependencies in the correct order
 
-IF OBJECT_ID('LOS_GDDS.Inmueble_Ambiente', 'U') IS NOT NULL
-    DROP TABLE LOS_GDDS.Inmueble_Ambiente;
-GO
-
 IF OBJECT_ID('LOS_GDDS.Caracteristica_inmueble', 'U') IS NOT NULL
     DROP TABLE LOS_GDDS.Caracteristica_inmueble;
 GO

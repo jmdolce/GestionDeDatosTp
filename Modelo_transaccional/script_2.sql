@@ -1,3 +1,412 @@
+USE [GD2C2023]
+GO
+
+/* CREACION DEL SCHEMA */
+
+CREATE SCHEMA LOS_GDDS
+GO
+
+
+
+/* CREACION DE TABLAS */
+
+/* ------------------------------------------ TIPIFICACION ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Propietario(
+    id INT PRIMARY KEY,
+    nombre NVARCHAR(100),
+    apellido NVARCHAR(20),
+    dni NUMERIC(18,0),
+    fecha_registro DATETIME,
+    telefono NUMERIC(18,0),
+    mail NVARCHAR(255),
+    fecha_nacimiento DATETIME
+);
+
+CREATE TABLE LOS_GDDS.Disposicion(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Estado_inmueble(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Orientacion(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+/* ------------------------------------------ INMUEBLE ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Inmueble(
+    id NUMERIC(18,0) PRIMARY KEY,
+    tipo_inmueble_id INT, --FK
+    descripcion NVARCHAR(100),
+    propietario_id INT, -- FK
+    direccion NVARCHAR(100),
+    barrio_id INT, --FK
+    superficie_total NUMERIC(18,2), 
+    disposicion_id INT, --FK
+    estado_id INT, --FK
+    orientacion_id INT, --FK
+    ambiente_id INT, -- FK
+    antiguedad NUMERIC(18,0),
+    ultima_expensa NUMERIC(18,2)
+);
+
+CREATE TABLE LOS_GDDS.Caracteristica_inmueble(
+    caracteristica_id INT, --FK
+    inmueble_id NUMERIC(18,0), --FK
+    PRIMARY KEY (caracteristica_id, inmueble_id)
+);
+
+CREATE TABLE LOS_GDDS.Caracteristica(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+);
+
+CREATE TABLE LOS_GDDS.Ambiente(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre nVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Tipo_inmueble(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+/* ------------------------------------------ VENTA ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Venta(
+    id NUMERIC(18,0) PRIMARY KEY, ---esto es el codigo
+    anuncio_id NUMERIC(18,0) NULL, --FK
+    comprador_id INT, --FK
+    fecha_venta DATETIME,
+    precio NUMERIC(18,2),
+    moneda_id INT, --FK
+    comision NUMERIC(18,2)
+);
+
+CREATE TABLE LOS_GDDS.Pago_venta(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    importe NUMERIC(18,2),
+    moneda_id INT,      -- FK
+    cotizacion NUMERIC(18,2),
+    medio_pago_id INT, -- FK
+    venta_id NUMERIC(18,0) -- FK
+);
+
+CREATE TABLE LOS_GDDS.Comprador(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    apellido NVARCHAR(100),
+    dni NUMERIC(18,0),
+    fecha_registro DATETIME,
+    telefono NUMERIC(18,0),
+    mail NVARCHAR(100),
+    fecha_nacimiento DATETIME
+);
+
+/* ------------------------------------------ ANUNCIO ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Anuncio(
+    id NUMERIC(18,0) PRIMARY KEY,
+    fecha_publicacion DATE,
+    agente_id NUMERIC(19,0), -- FK
+    inmueble_id NUMERIC(18,0), -- FK
+    operacion_id INT, -- FK
+    precio_inmueble NUMERIC(18,2),
+    moneda_id INT, --FK
+    periodo_id INT, -- FK
+    estado_id INT, -- FK
+    fecha_finalizacion DATE,
+    costo_publicacion NUMERIC(18,2)
+);
+
+CREATE TABLE LOS_GDDS.Agente(
+    id NUMERIC(19,0) IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    sucursal_id NUMERIC(18,0) , --FK
+    apellido NVARCHAR(100),
+    dni NUMERIC(18,0),
+    fecha_registro DATETIME,
+    telefono NUMERIC(18,0),
+    mail NVARCHAR(100),
+    fecha_nacimiento DATETIME
+);
+
+CREATE TABLE LOS_GDDS.Sucursal(
+    id NUMERIC(18, 0) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    direccion NVARCHAR(100),
+    telefono NVARCHAR(100),
+    localidad_id INT --FK
+);
+
+CREATE TABLE LOS_GDDS.Estado_anuncio(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Operacion(
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  nombre NVARCHAR(100)  
+);
+
+CREATE TABLE LOS_GDDS.Tipo_periodo(
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  nombre NVARCHAR(100)  
+);
+
+CREATE TABLE LOS_GDDS.Moneda(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+/* ------------------------------------------ UBICACION ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Provincia(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Localidad(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    provincia_id INT --FK
+);
+
+CREATE TABLE LOS_GDDS.Barrio(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    localidad_id INT -- FK
+);
+
+/* ------------------------------------------ ALQUILER ------------------------------------------ */
+
+CREATE TABLE LOS_GDDS.Alquiler(
+    id NUMERIC(18,0) PRIMARY KEY,
+    anuncio_id NUMERIC(18,0), -- FK
+    inquilino_id INT, -- FK
+    fecha_inicio DATETIME,
+    fecha_fin DATETIME,
+    importe NUMERIC(18,2),  
+    cantidad_periodos NUMERIC(18,0),
+    comision NUMERIC(18,2),
+    gastos_averiguaciones NUMERIC(18,2),
+    estado_id INT, --FK
+    deposito NUMERIC(18,2)
+);
+
+CREATE TABLE LOS_GDDS.Pago_alquiler(
+    id NUMERIC(18,0) PRIMARY KEY,
+    alquiler_id NUMERIC(18,0), -- FK
+    fecha DATETIME,
+    num_periodo INT,    
+    descripcion_periodo NVARCHAR(100),
+    fecha_inicio_periodo DATETIME,
+    fecha_fin_periodo DATETIME,
+    importe NUMERIC(18,2),
+    medio_pago_id INT --FK
+);
+
+CREATE TABLE LOS_GDDS.Inquilino(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100),
+    apellido NVARCHAR(20),
+    dni NUMERIC(18,0),
+    fecha_registro DATETIME,
+    telefono NUMERIC(18,0),
+    mail NVARCHAR(255),
+    fecha_nacimiento DATETIME
+);
+
+CREATE TABLE LOS_GDDS.Estado_alquiler(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+CREATE TABLE LOS_GDDS.Detalle_alquiler(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    periodo_inicio NUMERIC(18,0),
+    periodo_fin NUMERIC(18,0),
+    precio NUMERIC(18,2),
+    alquiler_id NUMERIC(18,0) NULL --FK
+);
+
+CREATE TABLE LOS_GDDS.Medio_pago(
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100)
+);
+
+
+/* ------------------------------------------ FOREIGN KEYS ------------------------------------------ */
+
+-- Anuncio
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_agente
+FOREIGN KEY (agente_id) REFERENCES LOS_GDDS.Agente(id)
+GO
+
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_inmueble
+FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
+GO
+
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_moneda
+FOREIGN KEY (moneda_id) REFERENCES LOS_GDDS.Moneda(id)
+GO
+
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_periodo
+FOREIGN KEY (periodo_id) REFERENCES LOS_GDDS.Tipo_periodo(id)
+GO
+
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_estado
+FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_anuncio(id)
+GO
+
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_operacion
+FOREIGN KEY (operacion_id) REFERENCES LOS_GDDS.Operacion(id)
+GO
+
+-- Inmueble
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_tipo
+FOREIGN KEY (tipo_inmueble_id) REFERENCES LOS_GDDS.Tipo_inmueble(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_propietario
+FOREIGN KEY (propietario_id) REFERENCES LOS_GDDS.Propietario(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_barrio
+FOREIGN KEY (barrio_id) REFERENCES LOS_GDDS.Barrio(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_disposicion
+FOREIGN KEY (disposicion_id) REFERENCES LOS_GDDS.Disposicion(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_estado
+FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_inmueble(id)
+GO
+
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_orientacion
+FOREIGN KEY (orientacion_id) REFERENCES LOS_GDDS.Orientacion(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_ambiente
+FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
+GO
+
+-- Venta
+ALTER TABLE LOS_GDDS.Venta 
+ADD CONSTRAINT FK_venta_anuncio
+FOREIGN KEY (anuncio_id) REFERENCES LOS_GDDS.Anuncio(id)
+GO
+
+ALTER TABLE LOS_GDDS.Venta 
+ADD CONSTRAINT FK_venta_comprador
+FOREIGN KEY (comprador_id) REFERENCES LOS_GDDS.Comprador(id)
+GO
+
+ALTER TABLE LOS_GDDS.Venta 
+ADD CONSTRAINT FK_venta_moneda
+FOREIGN KEY (moneda_id) REFERENCES LOS_GDDS.Moneda(id)
+GO
+
+ALTER TABLE LOS_GDDS.Pago_venta
+ADD CONSTRAINT FK_PagoVenta_venta
+FOREIGN KEY (venta_id) REFERENCES LOS_GDDS.Venta(id)
+GO
+
+-- Pago_venta
+ALTER TABLE LOS_GDDS.Pago_venta 
+ADD CONSTRAINT FK_pago_moneda
+FOREIGN KEY (moneda_id) REFERENCES LOS_GDDS.Moneda(id)
+GO
+
+ALTER TABLE LOS_GDDS.Pago_venta 
+ADD CONSTRAINT FK_pago_medio
+FOREIGN KEY (medio_pago_id) REFERENCES LOS_GDDS.Medio_pago(id)
+GO
+
+-- Ubicacion
+
+ALTER TABLE LOS_GDDS.Localidad 
+ADD CONSTRAINT FK_localidad_provincia
+FOREIGN KEY (provincia_id) REFERENCES LOS_GDDS.Provincia(id)
+GO
+
+-- Alquiler
+ALTER TABLE LOS_GDDS.Alquiler 
+ADD CONSTRAINT FK_alquiler_anuncio
+FOREIGN KEY (anuncio_id) REFERENCES LOS_GDDS.Anuncio(id)
+GO
+
+ALTER TABLE LOS_GDDS.Alquiler 
+ADD CONSTRAINT FK_alquiler_inquilino
+FOREIGN KEY (inquilino_id) REFERENCES LOS_GDDS.Inquilino(id)
+GO
+
+ALTER TABLE LOS_GDDS.Alquiler 
+ADD CONSTRAINT FK_alquiler_estado
+FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_anuncio(id)
+GO
+
+-- Pago Alquiler
+ALTER TABLE LOS_GDDS.Pago_alquiler
+ADD CONSTRAINT FK_pagoAlquiler_alquiler
+FOREIGN KEY (alquiler_id) REFERENCES LOS_GDDS.Alquiler(id)
+GO
+
+ALTER TABLE LOS_GDDS.Pago_alquiler
+ADD CONSTRAINT FK_pagoAlquiler_medioPago
+FOREIGN KEY (medio_pago_id) REFERENCES LOS_GDDS.Medio_pago(id)
+GO
+
+-- Detalle Alquiler
+ALTER TABLE LOS_GDDS.Detalle_alquiler
+ADD CONSTRAINT FK_detalleAlquiler_alquiler
+FOREIGN KEY (alquiler_id) REFERENCES LOS_GDDS.Alquiler(id)
+
+-- Agente
+ALTER TABLE LOS_GDDS.Agente
+ADD CONSTRAINT FK_agente_sucursal
+FOREIGN KEY (sucursal_id) REFERENCES LOS_GDDS.Sucursal(id)
+GO
+
+
+-- Sucursal
+ALTER TABLE LOS_GDDS.Sucursal
+ADD CONSTRAINT FK_sucursal_provincia
+FOREIGN KEY (localidad_id) REFERENCES LOS_GDDS.Localidad(id)
+GO
+
+-- Caracteristica Inmueble
+ALTER TABLE LOS_GDDS.Caracteristica_inmueble
+ADD CONSTRAINT FK_caracteristicaInmueble_caracteristica
+FOREIGN KEY (caracteristica_id) REFERENCES LOS_GDDS.Caracteristica(id)
+GO
+
+ALTER TABLE LOS_GDDS.Caracteristica_inmueble
+ADD CONSTRAINT FK_caracteristicaInmueble_inmueble
+FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
+GO
+
 
 /* ------------------------------------------ MIGRACIÓN CON PROCEDURES ------------------------------------------ */
 
@@ -143,7 +552,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_Inmueble
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.Inmueble(id, tipo_inmueble_id, descripcion, direccion, propietario_id, barrio_id, superficie_total, disposicion_id, estado_id, orientacion_id, ambiente_id ,antiguedad, ultima_expensa)
+    INSERT INTO LOS_GDDS.Inmueble(id, tipo_inmueble_id, descripcion, direccion, propietario_id, barrio_id, superficie_total, disposicion_id, estado_id, orientacion_id, antiguedad, ultima_expensa)
     SELECT
         m.INMUEBLE_CODIGO,
         MAX(ti.id) AS id,
@@ -498,3 +907,49 @@ BEGIN
     WHERE m.ALQUILER_ESTADO IS NOT NULL
 END
 GO
+
+/* ------------- EJECUCION DE PROCEDURES ---------------- */
+
+EXEC LOS_GDDS.MIGRAR_Provincia ---OK
+EXEC LOS_GDDS.MIGRAR_Localidad--OK
+EXEC LOS_GDDS.MIGRAR_Barrio--CHEQUEAR
+
+EXEC LOS_GDDS.MIGRAR_PROPIETARIO ---OK
+
+EXEC LOS_GDDS.MIGRAR_Sucursal---OK
+
+EXEC LOS_GDDS.MIGRAR_Agente---OK
+
+EXEC LOS_GDDS.MIGRAR_Disposicion ---OK
+EXEC LOS_GDDS.MIGRAR_EstadoInmueble---OK
+EXEC LOS_GDDS.MIGRAR_TipoInmueble --OK
+EXEC LOS_GDDS.MIGRAR_Orientacion --OK
+
+
+EXEC LOS_GDDS.MIGRAR_Ambiente-- OK
+EXEC LOS_GDDS.MIGRAR_Inmueble -- OK
+EXEC LOS_GDDS.MIGRAR_Caracteristica-- OK
+EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble --OK
+
+
+
+EXEC LOS_GDDS.MIGRAR_EstadoAnuncio---OK
+
+
+EXEC LOS_GDDS.MIGRAR_Operacion---OK
+EXEC LOS_GDDS.MIGRAR_TipoPeriodo---OK
+EXEC LOS_GDDS.MIGRAR_Moneda---OK
+EXEC LOS_GDDS.MIGRAR_MedioPago---OK
+
+EXEC LOS_GDDS.MIGRAR_Inquilino---OK
+EXEC LOS_GDDS.MIGRAR_EstadoAlquiler---OK
+
+EXEC LOS_GDDS.MIGRAR_Anuncio --OK
+EXEC LOS_GDDS.MIGRAR_Alquiler --OK
+
+EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- OK
+EXEC LOS_GDDS.MIGRAR_PagoAlquiler --OK
+
+EXEC LOS_GDDS.MIGRAR_Comprador  
+EXEC LOS_GDDS.MIGRAR_Venta --OK
+EXEC LOS_GDDS.MIGRAR_PagoVenta -- OK

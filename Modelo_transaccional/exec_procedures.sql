@@ -19,7 +19,6 @@ EXEC LOS_GDDS.MIGRAR_Orientacion --OK
 EXEC LOS_GDDS.MIGRAR_Ambiente-- OK
 EXEC LOS_GDDS.MIGRAR_Inmueble -- OK
 EXEC LOS_GDDS.MIGRAR_Caracteristica-- OK
-EXEC LOS_GDDS.MIGRAR_AmbienteInmueble --OK 
 EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble --OK
 
 

@@ -43,20 +43,15 @@ CREATE TABLE LOS_GDDS.Inmueble(
     disposicion_id INT, --FK
     estado_id INT, --FK
     orientacion_id INT, --FK
+    ambiente_id INT, -- FK
     antiguedad NUMERIC(18,0),
-    ultima_expensa NUMERIC(18,2),
+    ultima_expensa NUMERIC(18,2)
 );
 
 CREATE TABLE LOS_GDDS.Caracteristica_inmueble(
     caracteristica_id INT, --FK
     inmueble_id NUMERIC(18,0), --FK
     PRIMARY KEY (caracteristica_id, inmueble_id)
-);
-
-CREATE TABLE LOS_GDDS.Inmueble_Ambiente(
-    inmueble_id NUMERIC(18,0), --FK
-    ambiente_id INT, --FK
-	PRIMARY KEY (inmueble_id, ambiente_id)
 );
 
 CREATE TABLE LOS_GDDS.Caracteristica(

@@ -64,6 +64,11 @@ ADD CONSTRAINT FK_inmueble_orientacion
 FOREIGN KEY (orientacion_id) REFERENCES LOS_GDDS.Orientacion(id)
 GO
 
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_ambiente
+FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
+GO
+
 -- Venta
 ALTER TABLE LOS_GDDS.Venta 
 ADD CONSTRAINT FK_venta_anuncio
@@ -157,15 +162,4 @@ GO
 ALTER TABLE LOS_GDDS.Caracteristica_inmueble
 ADD CONSTRAINT FK_caracteristicaInmueble_inmueble
 FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
-GO
-
--- Inmueble_Ambiente
-ALTER TABLE LOS_GDDS.Inmueble_Ambiente
-ADD CONSTRAINT FK_inmuebleAmbiente_inmueble
-FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
-GO
-
-ALTER TABLE LOS_GDDS.Inmueble_Ambiente
-ADD CONSTRAINT FK_inmuebleAmbiente_ambiente
-FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
 GO

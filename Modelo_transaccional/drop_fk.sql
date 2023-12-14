@@ -129,11 +129,3 @@ GO
 IF OBJECT_ID ('LOS_GDD.FK_caracteristicaInmueble_inmueble', 'F') IS NOT NULL
     ALTER TABLE LOS_GDD.Caracteristica_inmueble DROP CONSTRAINT FK_caracteristicaInmueble_inmueble
 GO   
-
-IF OBJECT_ID ('LOS_GDD.FK_inmuebleAmbiente_inmueble', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDD.Inmueble_Ambiente DROP CONSTRAINT FK_inmuebleAmbiente_inmueble
-GO   
-
-IF OBJECT_ID ('LOS_GDD.FK_inmuebleAmbiente_ambiente', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDD.Inmueble_Ambiente DROP CONSTRAINT FK_inmuebleAmbiente_ambiente
-GO   
