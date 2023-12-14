@@ -10,14 +10,13 @@ SELECT
 	u.localidad AS Localidad,
 	u.barrio AS Barrio, 
 	amb.nombre [Ambiente], 
-	AVG(a.cantidad_dias_promedio_publicado) AS [Duracion dias]
+	AVG(a.cantidad_dias_promedio_publicado) AS [Tiempo promedio publicado]
 FROM LOS_GDDS.BI_Anuncio a 
 JOIN LOS_GDDS.BI_Tiempo t ON t.id = a.tiempo_id
 JOIN LOS_GDDS.BI_Tipo_Operacion op ON a.tipo_operacion_id = op.id
 JOIN LOS_GDDS.BI_Ubicacion u ON u.id = a.ubicación_id
 JOIN LOS_GDDS.BI_Ambiente amb ON amb.id = a.tipo_inmueble_id
 
-WHERE u.provincia = "Buenos Aires"
 GROUP BY t.anio, t.cuatrimestre, op.nombre, u.provincia, u.localidad, u.barrio, amb.nombre
 ORDER BY t.anio, t.cuatrimestre, op.nombre, u.provincia, u.localidad, u.barrio, amb.nombre
 GO
@@ -141,7 +140,7 @@ SELECT
     -- porcentaje operacioenes concretadas
 FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_Anuncio a ON a.tiempo_id = t.id
-JOIN LOS_GDDS.BI_RANGO_ETARIO re ON re.id = a.rango_etario_empleado_id
+JOIN LOS_GDDS.BI_RANGO_ETARIO re ON re.RANGO_ETARIO_ID = a.rango_etario_empleado_id
 JOIN LOS_GDDS.BI_SUCURSAL s ON s.id = a.sucursal_id
 
 GROUP BY t.anio, s.nombre, re.RANGO_ETARIO_DESCRIPCION
