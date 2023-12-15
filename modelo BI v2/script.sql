@@ -643,7 +643,6 @@ GROUP BY t.anio, t.mes
 GO
 --- VISTA 5 ---
 
--- Ningun alquiler que tuvo incremento esta ACTIVO, asi que deje de lado esa condicion (en el create procedure de BI_PagoAlquiler)
 CREATE VIEW LOS_GDDS.Vista_PorcentajeIncrementoAlquiler AS
 SELECT
     t.anio,
