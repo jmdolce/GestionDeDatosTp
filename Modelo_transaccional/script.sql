@@ -552,7 +552,7 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_Inmueble
 AS
 BEGIN
-    INSERT INTO LOS_GDDS.Inmueble(id, tipo_inmueble_id, descripcion, direccion, propietario_id, barrio_id, superficie_total, disposicion_id, estado_id, orientacion_id, antiguedad, ultima_expensa)
+    INSERT INTO LOS_GDDS.Inmueble(id, tipo_inmueble_id, descripcion, direccion, propietario_id, barrio_id, superficie_total, disposicion_id, estado_id, orientacion_id, ambiente_id ,antiguedad, ultima_expensa)
     SELECT
         m.INMUEBLE_CODIGO,
         MAX(ti.id) AS id,
