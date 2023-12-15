@@ -61,23 +61,21 @@ GO
 
 --- VISTA 4 ---
 
--- TODO: raro, da todos los porcentajes cero
 CREATE VIEW LOS_GDDS.Vista_PorcentajeIncumplimientoPagos AS
 SELECT
     t.anio,
     t.mes,
-    ISNULL(al.porcentaje_pagos_fuera_termino,0) AS PorcentajeIncumplimiento
+    ISNULL(AVG(al.porcentaje_pagos_fuera_termino) ,0) AS PorcentajeIncumplimiento
 	
 FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_Alquiler al ON al.tiempo_id = t.id
 
-GROUP BY t.anio, t.mes, ISNULL(al.porcentaje_pagos_fuera_termino,0) 
-ORDER BY t.anio, t.mes, ISNULL(al.porcentaje_pagos_fuera_termino,0) 
+GROUP BY t.anio, t.mes
+ORDER BY t.anio, t.mes
 GO
-
 --- VISTA 5 ---
 
--- TODO: Ningun alquiler que tuvo incremento esta ACTIVO xd (REVISAR)
+-- Ningun alquiler que tuvo incremento esta ACTIVO, asi que deje de lado esa condicion (en el create procedure de BI_PagoAlquiler)
 CREATE VIEW LOS_GDDS.Vista_PorcentajeIncrementoAlquiler AS
 SELECT
     t.anio,
@@ -109,7 +107,7 @@ LEFT JOIN LOS_GDDS.BI_Venta v ON v.tiempo_id = t.id
 JOIN LOS_GDDS.BI_Tipo_inmueble ti ON v.tipo_inmueble_id = ti.id
 JOIN LOS_GDDS.BI_Ubicacion u ON v.ubicación_id = u.id
 
-GROUP BY t.anio, t.cuatrimestre, ti.nombre, u.provincia,u.localidad
+GROUP BY t.anio, t.cuatrimestre, ti.nombre, u.provincia, u.localidad
 GO
 
 --- VISTA 7 ---
@@ -168,4 +166,3 @@ JOIN LOS_GDDS.BI_Tipo_Moneda m ON m.id = a.tipo_moneda_id
 GROUP BY t.anio, t.cuatrimestre, s.nombre, o.nombre, m.nombre
 
 GO	
-

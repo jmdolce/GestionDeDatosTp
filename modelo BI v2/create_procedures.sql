@@ -103,7 +103,7 @@ CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Venta
 AS 
 BEGIN
 	INSERT INTO LOS_GDDS.BI_Venta
-	SELECT t.id, ti.id, s.id, u.id, m.id, COUNT(DISTINCT v.id), AVG(a.precio_inmueble) 
+	SELECT t.id, ti.id, s.id, u.id, m.id, COUNT(DISTINCT v.id), AVG(v.precio / i.superficie_total) 
     FROM LOS_GDDS.BI_Tiempo t  
 	LEFT JOIN LOS_GDDS.Venta v ON DATEPART(YEAR, v.fecha_venta) = t.anio AND DATEPART(MONTH, v.fecha_venta) = t.mes
 
@@ -132,7 +132,7 @@ BEGIN
 	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id,
 	an.operacion_id, s.id,
 	ISNULL(SUM(CASE WHEN ea.nombre = 'Activo' THEN 1 ELSE 0 END), 0), -- cantidad alquileres activos 
-	ISNULL((SUM(CASE WHEN pa.fecha > pa.fecha_fin_periodo THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0), -- porcentaje_pagos_fuera_termino
+	ISNULL((SUM(CASE WHEN pa.fecha >= pa.fecha_fin_periodo THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0), -- porcentaje_pagos_fuera_termino
 	COUNT(DISTINCT pa.id) -- cantidad_pagos 
 		
 	FROM LOS_GDDS.BI_Tiempo t   -- TODO: el LEFT JOIN no me devuelve todos los tiempos (e.g. el tiempo con id 10 no esta en la tabla de alquiler BI) 
@@ -167,7 +167,7 @@ BEGIN
 		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)), -- cantidad_dias_promedio_publicado
 		AVG(a.precio_inmueble), -- precio_promedio_inmuebles
 		COUNT(DISTINCT a.id), -- cantidad_anuncios
-		SUM(ISNULL(v.precio, 0)) + SUM(ISNULL(al.importe,0)), -- monto_operaciones
+		SUM(ISNULL(v.precio, 0) + ISNULL(v.comision, 0)) + SUM(ISNULL(al.importe,0) + ISNULL(al.deposito,0)), -- monto_operaciones
 		COUNT(DISTINCT v.id) + COUNT(DISTINCT al.id), -- cantidad_operaciones_concretadas
 		AVG(ISNULL(v.comision,0)) + AVG(ISNULL(al.comision,0)) -- promedio_comision
 	FROM LOS_GDDS.BI_Tiempo t  
