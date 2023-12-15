@@ -132,7 +132,7 @@ SELECT
     t.anio,
     s.nombre AS Sucursal, 
     re.RANGO_ETARIO_DESCRIPCION AS [Rango Etario],
-    SUM(a.cantidad_operaciones_concretadas) * 100 / SUM(a.cantidad_anuncios) AS [Porcentaje Operacioenes Concretadas]
+    CAST(SUM(a.cantidad_operaciones_concretadas) AS NUMERIC(18,2)) * 100 / CAST(SUM(a.cantidad_anuncios) AS NUMERIC(18,2)) AS [Porcentaje Operacioenes Concretadas]
 FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_Anuncio a ON a.tiempo_id = t.id
 LEFT JOIN LOS_GDDS.BI_RANGO_ETARIO re ON re.RANGO_ETARIO_ID = a.rango_etario_empleado_id
