@@ -51,20 +51,15 @@ CREATE TABLE LOS_GDDS.Inmueble(
     disposicion_id INT, --FK
     estado_id INT, --FK
     orientacion_id INT, --FK
+    ambiente_id INT, -- FK
     antiguedad NUMERIC(18,0),
-    ultima_expensa NUMERIC(18,2),
+    ultima_expensa NUMERIC(18,2)
 );
 
 CREATE TABLE LOS_GDDS.Caracteristica_inmueble(
     caracteristica_id INT, --FK
     inmueble_id NUMERIC(18,0), --FK
     PRIMARY KEY (caracteristica_id, inmueble_id)
-);
-
-CREATE TABLE LOS_GDDS.Inmueble_Ambiente(
-    inmueble_id NUMERIC(18,0), --FK
-    ambiente_id INT, --FK
-	PRIMARY KEY (inmueble_id, ambiente_id)
 );
 
 CREATE TABLE LOS_GDDS.Caracteristica(
@@ -275,6 +270,11 @@ ADD CONSTRAINT FK_anuncio_estado
 FOREIGN KEY (estado_id) REFERENCES LOS_GDDS.Estado_anuncio(id)
 GO
 
+ALTER TABLE LOS_GDDS.Anuncio 
+ADD CONSTRAINT FK_anuncio_operacion
+FOREIGN KEY (operacion_id) REFERENCES LOS_GDDS.Operacion(id)
+GO
+
 -- Inmueble
 ALTER TABLE LOS_GDDS.Inmueble
 ADD CONSTRAINT FK_inmueble_tipo
@@ -305,6 +305,11 @@ GO
 ALTER TABLE LOS_GDDS.Inmueble
 ADD CONSTRAINT FK_inmueble_orientacion
 FOREIGN KEY (orientacion_id) REFERENCES LOS_GDDS.Orientacion(id)
+GO
+
+ALTER TABLE LOS_GDDS.Inmueble
+ADD CONSTRAINT FK_inmueble_ambiente
+FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
 GO
 
 -- Venta
@@ -400,17 +405,6 @@ GO
 ALTER TABLE LOS_GDDS.Caracteristica_inmueble
 ADD CONSTRAINT FK_caracteristicaInmueble_inmueble
 FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
-GO
-
--- Inmueble_Ambiente
-ALTER TABLE LOS_GDDS.Inmueble_Ambiente
-ADD CONSTRAINT FK_inmuebleAmbiente_inmueble
-FOREIGN KEY (inmueble_id) REFERENCES LOS_GDDS.Inmueble(id)
-GO
-
-ALTER TABLE LOS_GDDS.Inmueble_Ambiente
-ADD CONSTRAINT FK_inmuebleAmbiente_ambiente
-FOREIGN KEY (ambiente_id) REFERENCES LOS_GDDS.Ambiente(id)
 GO
 
 
@@ -570,6 +564,7 @@ BEGIN
         MAX(d.id) AS d_id,
         MAX(e.id) AS e_id,
         MAX(o.id) AS o_id,
+        MAX(a.id),
         MAX(m.INMUEBLE_ANTIGUEDAD) AS INMUEBLE_ANTIGUEDAD,
         MAX(m.INMUEBLE_EXPESAS) AS INMUEBLE_EXPESAS
     FROM gd_esquema.Maestra m
@@ -577,26 +572,17 @@ BEGIN
     JOIN LOS_GDDS.Disposicion d ON m.INMUEBLE_DISPOSICION = d.nombre
     JOIN LOS_GDDS.Estado_inmueble e ON m.INMUEBLE_ESTADO = e.nombre
     JOIN LOS_GDDS.Orientacion o ON m.INMUEBLE_ORIENTACION = o.nombre
-    JOIN LOS_GDDS.Barrio b ON m.INMUEBLE_BARRIO = b.nombre
+    
+    JOIN LOS_GDDS.Localidad l ON l.nombre = m.INMUEBLE_LOCALIDAD -- checkear
+    JOIN LOS_GDDS.Barrio b ON m.INMUEBLE_BARRIO = b.nombre AND b.localidad_id = l.id
+
     JOIN LOS_GDDS.Tipo_inmueble ti ON m.INMUEBLE_TIPO_INMUEBLE = ti.nombre
+    JOIN LOS_GDDS.Ambiente a ON a.nombre = INMUEBLE_CANT_AMBIENTES
+
     WHERE INMUEBLE_CODIGO IS NOT NULL
     GROUP BY m.INMUEBLE_CODIGO;
 END
 GO
-
-
-CREATE PROCEDURE LOS_GDDS.MIGRAR_AmbienteInmueble
-AS
-BEGIN
-    INSERT INTO LOS_GDDS.Inmueble_Ambiente(ambiente_id, inmueble_id)
-    SELECT DISTINCT a.id, i.id
-    FROM gd_esquema.Maestra m
-    JOIN LOS_GDDS.Inmueble i ON m.INMUEBLE_CODIGO = i.id
-    JOIN LOS_GDDS.Ambiente a ON a.nombre = INMUEBLE_CANT_AMBIENTES
-    WHERE INMUEBLE_CODIGO IS NOT NULL;
-END
-GO
-
 
 
 CREATE PROCEDURE LOS_GDDS.MIGRAR_Caracteristica
@@ -896,7 +882,6 @@ GO
  	INSERT INTO LOS_GDDS.Detalle_alquiler(periodo_inicio, periodo_fin, precio, alquiler_id)
  	SELECT DISTINCT m.DETALLE_ALQ_NRO_PERIODO_INI, m.DETALLE_ALQ_NRO_PERIODO_FIN, m.DETALLE_ALQ_PRECIO, m.ALQUILER_CODIGO
     FROM gd_esquema.Maestra m
-    WHERE m.DETALLE_ALQ_NRO_PERIODO_INI IS NOT NULL
  END
  GO
 
@@ -927,7 +912,7 @@ GO
 
 EXEC LOS_GDDS.MIGRAR_Provincia ---OK
 EXEC LOS_GDDS.MIGRAR_Localidad--OK
-EXEC LOS_GDDS.MIGRAR_Barrio--OK
+EXEC LOS_GDDS.MIGRAR_Barrio--CHEQUEAR
 
 EXEC LOS_GDDS.MIGRAR_PROPIETARIO ---OK
 
@@ -944,8 +929,8 @@ EXEC LOS_GDDS.MIGRAR_Orientacion --OK
 EXEC LOS_GDDS.MIGRAR_Ambiente-- OK
 EXEC LOS_GDDS.MIGRAR_Inmueble -- OK
 EXEC LOS_GDDS.MIGRAR_Caracteristica-- OK
-EXEC LOS_GDDS.MIGRAR_AmbienteInmueble --OK 
 EXEC LOS_GDDS.MIGRAR_CaracteristicaInmueble --OK
+
 
 
 EXEC LOS_GDDS.MIGRAR_EstadoAnuncio---OK
@@ -965,6 +950,6 @@ EXEC LOS_GDDS.MIGRAR_Alquiler --OK
 EXEC LOS_GDDS.MIGRAR_DetalleAlquiler -- OK
 EXEC LOS_GDDS.MIGRAR_PagoAlquiler --OK
 
-EXEC LOS_GDDS.MIGRAR_Venta --OK
-EXEC LOS_GDDS.MIGRAR_PagoVenta
 EXEC LOS_GDDS.MIGRAR_Comprador  
+EXEC LOS_GDDS.MIGRAR_Venta --OK
+EXEC LOS_GDDS.MIGRAR_PagoVenta -- OK

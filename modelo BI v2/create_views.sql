@@ -18,7 +18,6 @@ JOIN LOS_GDDS.BI_Ubicacion u ON u.id = a.ubicación_id
 JOIN LOS_GDDS.BI_Ambiente amb ON amb.id = a.tipo_inmueble_id
 
 GROUP BY t.anio, t.cuatrimestre, op.nombre, u.provincia, u.localidad, u.barrio, amb.nombre
-ORDER BY t.anio, t.cuatrimestre, op.nombre, u.provincia, u.localidad, u.barrio, amb.nombre
 GO
 --- VISTA 2 --- 
 
@@ -71,7 +70,6 @@ FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_Alquiler al ON al.tiempo_id = t.id
 
 GROUP BY t.anio, t.mes
-ORDER BY t.anio, t.mes
 GO
 --- VISTA 5 ---
 
@@ -87,7 +85,6 @@ LEFT JOIN LOS_GDDS.BI_PagoAlquiler pa ON pa.tiempo_id = t.id
 
 GROUP BY t.anio, t.mes, pa.promedio_aumento
 HAVING pa.promedio_aumento > 0
-ORDER BY t.anio, t.mes, pa.promedio_aumento
 GO
 
 --- VISTA 6 ---
@@ -126,7 +123,6 @@ JOIN LOS_GDDS.BI_Tipo_Operacion o ON o.id = a.tipo_operacion_id
 JOIN LOS_GDDS.BI_Sucursal s ON s.id = a.sucursal_id
 
 GROUP BY t.anio, t.cuatrimestre, o.nombre, s.nombre
-ORDER BY t.anio, t.cuatrimestre, o.nombre, s.nombre
 GO
 
 --- VISTA 8 ---
