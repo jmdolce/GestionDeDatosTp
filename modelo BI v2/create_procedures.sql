@@ -132,7 +132,7 @@ BEGIN
 	SELECT t.id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(inq.fecha_nacimiento), LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), u.id,
 	an.operacion_id, s.id,
 	ISNULL(SUM(CASE WHEN ea.nombre = 'Activo' THEN 1 ELSE 0 END), 0), -- cantidad alquileres activos 
-	ISNULL((SUM(CASE WHEN pa.fecha > al.fecha_fin THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0), -- porcentaje_pagos_fuera_termino
+	ISNULL((SUM(CASE WHEN pa.fecha > pa.fecha_fin_periodo THEN 1 ELSE 0 END) * 100.0) / COUNT(DISTINCT pa.id), 0), -- porcentaje_pagos_fuera_termino
 	COUNT(DISTINCT pa.id) -- cantidad_pagos 
 		
 	FROM LOS_GDDS.BI_Tiempo t   -- TODO: el LEFT JOIN no me devuelve todos los tiempos (e.g. el tiempo con id 10 no esta en la tabla de alquiler BI) 
@@ -210,9 +210,9 @@ BEGIN
     
 	LEFT JOIN LOS_GDDS.Pago_alquiler pa ON DATEPART(YEAR, pa.fecha_inicio_periodo) = t.anio AND DATEPART(MONTH, pa.fecha_inicio_periodo) = t.mes 
 	JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.num_periodo = pa.num_periodo - 1
-	JOIN LOS_GDDS.ALquiler al ON al.id = pa.alquiler_id
+	JOIN LOS_GDDS.Alquiler al ON al.id = pa.alquiler_id
 	JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = al.estado_id
-	WHERE pa.importe > pant.importe AND ea.nombre = 'Activo'
+	WHERE pa.importe > pant.importe -- AND ea.nombre = 'Activo'
     GROUP BY t.id 
 	ORDER BY t.id
 END

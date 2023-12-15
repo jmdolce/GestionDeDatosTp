@@ -473,6 +473,7 @@ GO
  	INSERT INTO LOS_GDDS.Detalle_alquiler(periodo_inicio, periodo_fin, precio, alquiler_id)
  	SELECT DISTINCT m.DETALLE_ALQ_NRO_PERIODO_INI, m.DETALLE_ALQ_NRO_PERIODO_FIN, m.DETALLE_ALQ_PRECIO, m.ALQUILER_CODIGO
     FROM gd_esquema.Maestra m
+    WHERE m.DETALLE_ALQ_NRO_PERIODO_INI IS NOT NULL
  END
  GO
 
