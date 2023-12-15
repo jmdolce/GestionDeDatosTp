@@ -54,30 +54,3 @@ BEGIN
 END
 GO
 
-CREATE FUNCTION LOS_GDDS.ObtenerFechaInicioMes(@idTiempo INT)
-RETURNS DATE
-AS
-BEGIN
-    DECLARE @fechaInicioMes DATE;
-
-    SELECT @fechaInicioMes = DATEFROMPARTS(anio, mes, 1)
-    FROM LOS_GDDS.BI_Tiempo
-    WHERE id = @idTiempo;
-
-    RETURN @fechaInicioMes;
-END
-GO
-
-CREATE FUNCTION LOS_GDDS.ObtenerIdTiempoPorFecha(@fecha_inicio DATE, @fecha_fin DATE)
-RETURNS INT
-AS
-BEGIN
-    DECLARE @idTiempo INT;
-
-    SELECT @idTiempo = id
-    FROM LOS_GDDS.BI_Tiempo
-    WHERE LOS_GDDS.ObtenerFechaInicioMes(id) BETWEEN DATEFROMPARTS(YEAR(@fecha_inicio), MONTH(@fecha_inicio), 1) AND DATEFROMPARTS(YEAR(@fecha_fin), MONTH(@fecha_fin), 1)
-
-    RETURN @idTiempo;
-END
-GO

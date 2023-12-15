@@ -1,64 +1,82 @@
-/* ------------------------------------------ DROP DE FKS ------------------------------------------ */
+IF OBJECT_ID ('LOS_GDDS.FK_Venta_Tiempo', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT FK_Venta_Tiempo;
+GO
 
-IF OBJECT_ID ('LOS_GDDS.BI_Venta_tiempo_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT BI_Venta_tiempo_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Venta_tipo_inmueble_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT BI_Venta_tipo_inmueble_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Venta_sucursal_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT BI_Venta_sucursal_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Venta_ubicacion_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT BI_Venta_ubicacion_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Venta_tipo_moneda_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT BI_Venta_tipo_moneda_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_tiempo_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_tiempo_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_rango_etario_inquilino_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_rango_etario_inquilino_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_rango_etario_empleado_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_rango_etario_empleado_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_ubicacion_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_ubicacion_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_tipo_operacion_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_tipo_operacion_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Alquiler_sucursal_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT BI_Alquiler_sucursal_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_tipo_operacion_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_tipo_operacion_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_ubicacion_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_ubicacion_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_ambiente_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_ambiente_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_tiempo_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_tiempo_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_tipo_inmueble_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_tipo_inmueble_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_tipo_moneda_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_tipo_moneda_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_rango_etario_empleado_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_rango_etario_empleado_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_sucursal_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_sucursal_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_Anuncio_rango_m2_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT BI_Anuncio_rango_m2_fk;
-    
-IF OBJECT_ID ('LOS_GDDS.BI_PagoAlquiler_tiempo_fk', 'F') IS NOT NULL
-    ALTER TABLE LOS_GDDS.BI_PagoAlquiler DROP CONSTRAINT BI_PagoAlquiler_tiempo_fk;
+IF OBJECT_ID ('LOS_GDDS.FK_Venta_TipoInmueble', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT FK_Venta_TipoInmueble;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Venta_Sucursal', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT FK_Venta_Sucursal;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Venta_Ubicacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT FK_Venta_Ubicacion;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Venta_TipoMoneda', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Venta DROP CONSTRAINT FK_Venta_TipoMoneda;
+GO
+
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_Tiempo', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_Tiempo;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_RangoEtarioInquilino', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_RangoEtarioInquilino;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_RangoEtarioEmpleado', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_RangoEtarioEmpleado;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_Ubicacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_Ubicacion;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_TipoOperacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_TipoOperacion;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Alquiler_Sucursal', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Alquiler DROP CONSTRAINT FK_Alquiler_Sucursal;
+GO
+
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_TipoOperacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_TipoOperacion;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_Ubicacion', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_Ubicacion;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_Ambiente', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_Ambiente;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_Tiempo', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_Tiempo;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_TipoInmueble', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_TipoInmueble;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_TipoMoneda', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_TipoMoneda;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_Sucursal', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_Sucursal;
+GO
+
+IF OBJECT_ID ('LOS_GDDS.FK_Anuncio_RangoM2', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_Anuncio DROP CONSTRAINT FK_Anuncio_RangoM2;
+GO
+
+
+IF OBJECT_ID ('LOS_GDDS.FK_PagoAlquiler_Tiempo', 'F') IS NOT NULL
+    ALTER TABLE LOS_GDDS.BI_PagoAlquiler DROP CONSTRAINT FK_PagoAlquiler_Tiempo;
+GO
