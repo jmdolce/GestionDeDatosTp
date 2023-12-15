@@ -212,7 +212,6 @@ BEGIN
 	JOIN LOS_GDDS.Pago_alquiler pant ON pant.alquiler_id = pa.alquiler_id AND pant.num_periodo = pa.num_periodo - 1
 	JOIN LOS_GDDS.Alquiler al ON al.id = pa.alquiler_id
 	JOIN LOS_GDDS.Estado_alquiler ea ON ea.id = al.estado_id
-	WHERE pa.importe > pant.importe -- AND ea.nombre = 'Activo'
     GROUP BY t.id 
 	ORDER BY t.id
 END

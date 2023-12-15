@@ -88,6 +88,7 @@ FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_PagoAlquiler pa ON pa.tiempo_id = t.id
 
 GROUP BY t.anio, t.mes, pa.promedio_aumento
+HAVING pa.promedio_aumento > 0
 ORDER BY t.anio, t.mes, pa.promedio_aumento
 GO
 
