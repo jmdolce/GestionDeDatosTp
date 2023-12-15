@@ -136,7 +136,7 @@ SELECT
     t.anio,
     s.nombre AS Sucursal, 
     re.RANGO_ETARIO_DESCRIPCION AS [Rango Etario],
-    SUM(a.cantidad_operaciones_concretadas) * 100 / SUM(a.cantidad_anuncios) -- porcentaje operacioenes concretadas
+    SUM(a.cantidad_operaciones_concretadas) * 100 / SUM(a.cantidad_anuncios) AS [Porcentaje Operacioenes Concretadas]
 FROM LOS_GDDS.BI_Tiempo t
 LEFT JOIN LOS_GDDS.BI_Anuncio a ON a.tiempo_id = t.id
 LEFT JOIN LOS_GDDS.BI_RANGO_ETARIO re ON re.RANGO_ETARIO_ID = a.rango_etario_empleado_id
@@ -164,5 +164,4 @@ JOIN LOS_GDDS.BI_Tipo_Operacion o ON o.id = a.tipo_operacion_id
 JOIN LOS_GDDS.BI_Tipo_Moneda m ON m.id = a.tipo_moneda_id
 
 GROUP BY t.anio, t.cuatrimestre, s.nombre, o.nombre, m.nombre
-
 GO	

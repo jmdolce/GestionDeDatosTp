@@ -161,15 +161,18 @@ GO
 CREATE PROCEDURE LOS_GDDS.MIGRAR_BI_Anuncio
 AS
 BEGIN
+	-- operaciones de ventas
     INSERT INTO LOS_GDDS.BI_Anuncio
-    SELECT a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, 
-		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id),
-		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)), -- cantidad_dias_promedio_publicado
-		AVG(a.precio_inmueble), -- precio_promedio_inmuebles
-		COUNT(DISTINCT a.id), -- cantidad_anuncios
-		SUM(ISNULL(v.precio, 0) + ISNULL(v.comision, 0)) + SUM(ISNULL(al.importe,0) + ISNULL(al.deposito,0)), -- monto_operaciones
-		COUNT(DISTINCT v.id) + COUNT(DISTINCT al.id), -- cantidad_operaciones_concretadas
-		AVG(ISNULL(v.comision,0)) + AVG(ISNULL(al.comision,0)) -- promedio_comision
+    SELECT 
+		a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, 
+		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento) AS rango_etario_agente,
+		s.id AS sucursal_id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) AS rango_m2,
+		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)) AS cantidad_dias_promedio_publicado,
+		AVG(a.precio_inmueble) AS precio_promedio_inmuebles,
+		COUNT(DISTINCT a.id) AS cantidad_anuncios,
+		SUM(ISNULL(v.precio, 0) + ISNULL(v.comision, 0)) AS monto_operaciones,
+		ISNULL(SUM(CASE WHEN ea.nombre IN ('Vendido', 'Alquilado') THEN 1 ELSE 0 END), 0) AS cantidad_operaciones_concretadas,
+		AVG(ISNULL(v.comision, 0)) AS promedio_comision
 	FROM LOS_GDDS.BI_Tiempo t  
 	LEFT JOIN LOS_GDDS.Anuncio a ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
 
@@ -179,19 +182,71 @@ BEGIN
 	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
 	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
 
-	JOIN LOS_GDDS.Ambiente amb ON amb.id = i.ambiente_id
-	
-	JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
-	JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
+	LEFT JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
+	LEFT JOIN LOS_GDDS.Estado_anuncio ea ON ea.id = a.estado_id
+	LEFT JOIN LOS_GDDS.Ambiente amb ON amb.id = i.ambiente_id
+	LEFT JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
 
-	-- operaciones (venta + alquiler)
-	JOIN LOS_GDDS.Alquiler al ON a.id = al.anuncio_id
-	FULL JOIN LOS_GDDS.Venta v ON v.anuncio_id = a.id
+	-- para evitar filas duplicadas que distorcionen los calculos
+	LEFT JOIN (
+		SELECT 
+			v.anuncio_id,
+			ISNULL(SUM(v.precio), 0) AS precio,
+			ISNULL(SUM(v.comision), 0) AS comision
+		FROM LOS_GDDS.Venta v
+		GROUP BY v.anuncio_id
+	) v ON a.id = v.anuncio_id
 
-	WHERE a.id IS NOT NULL -- para evitar las filas en null
+	JOIN LOS_GDDS.Operacion o ON o.id = a.operacion_id
 
-	GROUP BY t.id, a.operacion_id, u.id, amb.id, i.tipo_inmueble_id, a.moneda_id, 
-		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id)
+	WHERE o.nombre = 'Tipo Operación Venta'
+
+	GROUP BY 
+		a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id);
+
+	-- operaciones de alquileres
+	INSERT INTO LOS_GDDS.BI_Anuncio
+	SELECT 
+		a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, 
+		LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento) AS rango_etario_agente,
+		s.id AS sucursal_id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id) AS rango_m2,
+		AVG(DATEDIFF(DAY, a.fecha_publicacion, a.fecha_finalizacion)) AS cantidad_dias_promedio_publicado,
+		AVG(a.precio_inmueble) AS precio_promedio_inmuebles,
+		COUNT(DISTINCT a.id) AS cantidad_anuncios,
+		SUM(ISNULL(al.monto_total, 0)) AS monto_operaciones,
+		ISNULL(SUM(CASE WHEN ea.nombre IN ('Vendido', 'Alquilado') THEN 1 ELSE 0 END), 0) AS cantidad_operaciones_concretadas,
+		AVG(ISNULL(al.comision, 0)) AS promedio_comision
+	FROM LOS_GDDS.BI_Tiempo t  
+	LEFT JOIN LOS_GDDS.Anuncio a ON DATEPART(YEAR, a.fecha_publicacion) = t.anio AND DATEPART(MONTH, a.fecha_publicacion) = t.mes
+
+	JOIN LOS_GDDS.Inmueble i ON i.id = a.inmueble_id
+	JOIN LOS_GDDS.Barrio b ON b.id =  i.barrio_id
+	JOIN LOS_GDDS.Localidad l ON b.localidad_id = l.id
+	JOIN LOS_GDDS.Provincia p ON p.id = l.provincia_id
+	JOIN LOS_GDDS.BI_Ubicacion u ON u.barrio = b.nombre AND u.localidad = l.nombre AND u.provincia = p.nombre
+
+	LEFT JOIN LOS_GDDS.Agente ag ON ag.id = a.agente_id
+	LEFT JOIN LOS_GDDS.Estado_anuncio ea ON ea.id = a.estado_id
+	LEFT JOIN LOS_GDDS.Ambiente amb ON amb.id = i.ambiente_id
+	LEFT JOIN LOS_GDDS.Sucursal s ON s.id = ag.sucursal_id
+
+	-- para evitar filas duplicadas que distorcionen los calculos
+	LEFT JOIN (
+		SELECT 
+			al.anuncio_id,
+			SUM(ISNULL(al.importe, 0) + ISNULL(al.deposito, 0) + ISNULL(al.gastos_averiguaciones, 0)) AS monto_total,
+			AVG(ISNULL(al.comision, 0)) AS comision
+		FROM LOS_GDDS.Alquiler al
+		GROUP BY al.anuncio_id
+	) al ON a.id = al.anuncio_id
+
+	JOIN LOS_GDDS.Operacion o ON o.id = a.operacion_id
+
+	WHERE o.nombre IN ('Tipo Operación Alquiler Contrato', 'Tipo Operación Alquiler Temporario')
+
+	GROUP BY 
+		a.operacion_id, u.id, amb.id, t.id, i.tipo_inmueble_id, a.moneda_id, LOS_GDDS.FX_CALCULAR_RANGO_ETARIO(ag.fecha_nacimiento), s.id, LOS_GDDS.FX_CALCULAR_RANGO_M2(a.inmueble_id);
+
 END
 GO
 
